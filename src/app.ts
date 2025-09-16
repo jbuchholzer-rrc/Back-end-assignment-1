@@ -21,7 +21,7 @@ export type Healthstatus = "OK";
 export interface HealthResponse {
     status: Healthstatus; // curent health status (string literal type)
     uptime: number;  // server uptime (number type)
-    timestamp: number; // current timestamp (number type)
+    timestamp: string; // current timestamp (string date type)
     version: string; // version from package.json (string type)
 
 
@@ -36,13 +36,13 @@ export const app = express();
 
 app.get("/api/v1/health", (_req: Request, res: Response<HealthResponse>) => {
     const body: HealthResponse = {
-        status: "OK",
-        uptime: process.uptime(),
-        timestamp: Date.now(),
-        version: pkg.version
+        status: "OK", // health status (string literal type)
+        uptime: Math.round(process.uptime()), // round uptime to nearest second
+        timestamp: new Date().toDateString(), // current date as string (string type)
+        version: pkg.version // version from package.json (string type)
     };
-    res.json(body);
-
+    
+    // Send JSON response with status code 200
     res.status(200).json(body);
 
 
