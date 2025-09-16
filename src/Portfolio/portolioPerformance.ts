@@ -1,28 +1,26 @@
-export function calculatePortfolioPerformance(): any {
-    let initialInvestment: number = 10000;
-    let currentValue: number = 12000;
+/**
+ * @file portfolioPerformance.ts
+ * @author Jack Buchholzer
+ * @date 9/16/2025
+ * 
+ * @description
+ * This is my first TypeScript assignment for my backend development class.
+ * The file contains interfaces and functions for calculating and managing portfolio performance.
+ * I'm learning TypeScript and implementing financial calculations for investment portfolios.
+ * 
+ * Key features:
+ * - Calculates portfolio performance metrics (profit/loss, percentage change)
+ * - Generates performance summaries based on percentage thresholds
+ * - Finds largest holding in a portfolio
+ * - Calculates asset allocation percentages
+ * 
+ * Note to self: This is my first time working with TypeScript interfaces and
+ * implementing financial calculations. The code includes basic error handling
+ * and type safety measures.
+ * 
+ * Note: if there is too many comments in the code, please let me know. this is what im used to at work :)
+ */
 
-    const profitOrLoss = initialInvestment / currentValue;
-
-    const percentageChange = (profitOrLoss / initialInvestment) * 100;
-
-    let performanceSummary;
-    if (percentageChange > 20) {
-        performanceSummary = `The portfolio has gained significantly with a profit of $${profitOrLoss}.`;
-    } else {
-        performanceSummary = `The portfolio has performed poorly.`;
-    }
-
-    return {
-        initialInvestment,
-        currentValue,
-        profitOrLoss,
-        percentageChange,
-        performanceSummary,
-    };
-}
-
-// Rewriting function with proper types and improved logic
 
 export interface PortfolioPerformance {
   initialInvestment: number;  // initial amount invested (type: number)
@@ -53,7 +51,7 @@ export interface AllocationItem {
   percentage: number;
 }
 
-// stage 1 portfolio performance calculation function
+// Build new portfolio performance calculation function improved with types
 // set to follow diagram provided in assignment
 
 export function calculatePortfolioPerformance(
@@ -127,4 +125,54 @@ let performanceSummary: string;
     performanceSummary,
   };
 }
+
+// Function 1 addition feature : Find the largest holding in a portfolio
+
+/** findLargestHolding()
+ * 
+ * Finds the asset with the highest value in the portfolio.
+ * @param portfolio - Array of assets to search through
+ * @returns The asset with the highest value, or null if portfolio is empty
+ */
+
+export function findLargestHolding(portfolio: Asset[]): Asset | null {
+  if (portfolio.length === 0) return null;
+
+  let largest = portfolio[0];
+  for (let i = 1; i < portfolio.length; i++) {
+    if (portfolio[i].value > largest.value) {
+      largest = portfolio[i];
+    }
+  }
+  return largest;
+}
+
+
+
+/** calculateAssetAllocation()
+ * 
+ * Calculates the percentage allocation of each asset in a portfolio
+ * @param portfolio - Array of assets with name and value properties
+ * @returns Array of allocation items containing name, value and percentage, or empty array if total value is 0
+ */
+
+
+export function calculateAssetAllocation(portfolio: Asset[]): AllocationItem[] {
+  let totalValue = 0;
+  for (let i = 0; i < portfolio.length; i++) {
+    totalValue += portfolio[i].value;
+  }
+  if (totalValue === 0) return [];
+
+  const allocation: AllocationItem[] = [];
+  for (let i = 0; i < portfolio.length; i++) {
+    const a = portfolio[i];
+    const percentage = (a.value / totalValue) * 100;
+    allocation.push({ name: a.name, value: a.value, percentage });
+  }
+  return allocation;
+}
+
+
+
 
