@@ -39,3 +39,92 @@ export interface PortfolioPerformance {
 
 
 
+
+// setting up interfaces for assets and allocation items
+export interface Asset { 
+  id: number;
+  name: string;
+  value: number;
+}
+
+export interface AllocationItem {
+  name: string;
+  value: number;
+  percentage: number;
+}
+
+// stage 1 portfolio performance calculation function
+// set to follow diagram provided in assignment
+
+export function calculatePortfolioPerformance(
+  initialInvestment: number,
+  currentValue: number
+): PortfolioPerformance {
+  // safety: avoid divide-by-zero
+  if (initialInvestment <= 0) {
+    return {
+      initialInvestment,
+      currentValue,
+      profitOrLoss: currentValue - initialInvestment,
+      percentageChange: 0,
+      performanceSummary: "Initial investment must be greater than 0.",
+    };
+  }
+
+  
+  // calculate profit/loss and percentage change
+  const profitOrLoss = currentValue - initialInvestment;
+  const percentageChange = (profitOrLoss / initialInvestment) * 100;
+
+
+  // Ranges for performance summary:
+  //  > 20%                 -> Gained significantly
+  //  10% to 20% (inclusive)-> Gained moderately
+  //  0%  to <10%           -> Gained slightly
+  //  exactly 0%            -> No change
+  //  -10% < to 0%          -> Lost slightly
+  //  -20% < to <= -10%     -> Lost moderately
+  //  <= -20%               -> Lost significantly
+  
+  
+  
+/* performance summary logic using switch statement */
+/* this is more readable than a long if-else chain in the original */
+
+
+let performanceSummary: string;
+  switch (true) {
+    case percentageChange > 20:
+      performanceSummary = "Gained significantly";
+      break;
+    case percentageChange >= 10 && percentageChange <= 20:
+      performanceSummary = "Gained moderately";
+      break;
+    case percentageChange > 0 && percentageChange < 10:
+      performanceSummary = "Gained slightly";
+      break;
+    case percentageChange === 0:
+      performanceSummary = "No change";
+      break;
+    case percentageChange < 0 && percentageChange > -10:
+      performanceSummary = "Lost slightly";
+      break;
+    case percentageChange <= -10 && percentageChange > -20:
+      performanceSummary = "Lost moderately";
+      break;
+    case percentageChange <= -20:
+      performanceSummary = "Lost significantly";
+      break;
+    default:
+      performanceSummary = "No change";
+  }
+
+ return {
+    initialInvestment,
+    currentValue,
+    profitOrLoss,
+    percentageChange,
+    performanceSummary,
+  };
+}
+
