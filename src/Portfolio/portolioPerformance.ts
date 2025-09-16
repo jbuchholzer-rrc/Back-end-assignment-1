@@ -4,7 +4,6 @@
  * @date 9/16/2025
  * 
  * @description
- * This is my first TypeScript assignment for my backend development class.
  * The file contains interfaces and functions for calculating and managing portfolio performance.
  * I'm learning TypeScript and implementing financial calculations for investment portfolios.
  * 
@@ -13,10 +12,6 @@
  * - Generates performance summaries based on percentage thresholds
  * - Finds largest holding in a portfolio
  * - Calculates asset allocation percentages
- * 
- * Note to self: This is my first time working with TypeScript interfaces and
- * implementing financial calculations. The code includes basic error handling
- * and type safety measures.
  * 
  * Note: if there is too many comments in the code, please let me know. this is what im used to at work :)
  */
