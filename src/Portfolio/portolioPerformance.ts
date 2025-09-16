@@ -22,4 +22,20 @@ export function calculatePortfolioPerformance(): any {
     };
 }
 
+// Rewriting function with proper types and improved logic
+
+export interface PortfolioPerformance {
+  initialInvestment: number;  // initial amount invested (type: number)
+  currentValue: number;       // current portfolio value (type: number)
+  profitOrLoss: number;       // dollars gained or lost  (type: number)
+  percentageChange: number;   // gain/loss as a percent of initial (type: number)
+  performanceSummary: string; // easy-to-read message (type: string)
+
+
+}
+
+// Notes: 9/16/2025 - wrote interface for portfolio performance object
+// Need to review TS and make sure types are correct and function logic is sound.
+
+
 
