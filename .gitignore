@@ -41,8 +41,9 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Test coverage
+# Test 
 coverage/
+jest.config.js
 
 # Package lock files
 package-lock.json.*.bak
