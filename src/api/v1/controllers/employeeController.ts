@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEmployee } from '../services/employeeService';
+import { createEmployee, getAllEmployees } from '../services/employeeService';
 
 /**
  * Controller function to handle employee creation
@@ -30,6 +30,27 @@ export function createEmployeeController(req: Request, res: Response): void {
         // Handle any errors that occur during employee creation
         res.status(500).json({
             error: 'Failed to create employee',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+}
+
+/**
+ * Controller function to retrieve all employees
+ * @param req - Express Request object
+ * @param res - Express Response object
+ */
+export function getAllEmployeesController(req: Request, res: Response): void {
+    try {
+        // Call service layer to get all employees
+        const employees = getAllEmployees();
+
+        // Return 200 OK status with the employee array
+        res.status(200).json(employees);
+    } catch (error) {
+        // Handle any errors that occur during retrieval
+        res.status(500).json({
+            error: 'Failed to retrieve employees',
             message: error instanceof Error ? error.message : 'Unknown error'
         });
     }
