@@ -40,3 +40,20 @@ export function getEmployeeById(id: number): Employee | undefined {
     return employees.find(employee => employee.id === id);
 }
 
+/**
+ * Updates an employee with new data
+ * @param id - The employee ID to update
+ * @param updateData - Partial employee data to update
+ * @returns The updated employee, or undefined if not found
+ */
+export function updateEmployee(id: number, updateData: Partial<Omit<Employee, 'id'>>): Employee | undefined {
+    const employeeIndex = employees.findIndex(employee => employee.id === id);
+
+    if (employeeIndex === -1) {
+        return undefined;
+    }
+
+    employees[employeeIndex] = { ...employees[employeeIndex], ...updateData };
+    return employees[employeeIndex];
+}
+
