@@ -57,3 +57,19 @@ export function updateEmployee(id: number, updateData: Partial<Omit<Employee, 'i
     return employees[employeeIndex];
 }
 
+/**
+ * Deletes an employee by ID
+ * @param id - The employee ID to delete
+ * @returns True if employee was deleted, false if not found
+ */
+export function deleteEmployee(id: number): boolean {
+    const employeeIndex = employees.findIndex(employee => employee.id === id);
+
+    if (employeeIndex === -1) {
+        return false;
+    }
+
+    employees.splice(employeeIndex, 1);
+    return true;
+}
+
