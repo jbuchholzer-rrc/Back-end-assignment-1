@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee } from '../services/employeeService';
+import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee, deleteEmployee } from '../services/employeeService';
 
 /**
  * Controller function to handle employee creation
@@ -124,6 +124,41 @@ export function updateEmployeeController(req: Request, res: Response): void {
         // Handle any errors that occur during update
         res.status(500).json({
             error: 'Failed to update employee',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+}
+
+/**
+ * Controller function to delete an employee
+ * @param req - Express Request object with id parameter
+ * @param res - Express Response object
+ */
+export function deleteEmployeeController(req: Request, res: Response): void {
+    try {
+        // Extract and parse employee ID from request parameters
+        const id = parseInt(req.params.id);
+
+        // Validate that ID is a valid number
+        if (isNaN(id)) {
+            res.status(400).json({ error: 'Invalid employee ID' });
+            return;
+        }
+
+        // Call service layer to delete the employee
+        const deleted = deleteEmployee(id);
+
+        // Return 404 if employee not found, otherwise return 204 No Content
+        if (!deleted) {
+            res.status(404).json({ error: 'Employee not found' });
+            return;
+        }
+
+        res.status(204).send();
+    } catch (error) {
+        // Handle any errors that occur during deletion
+        res.status(500).json({
+            error: 'Failed to delete employee',
             message: error instanceof Error ? error.message : 'Unknown error'
         });
     }
