@@ -30,3 +30,13 @@ export function createEmployee(employeeData: Omit<Employee, 'id'>): Employee {
 export function getAllEmployees(): Employee[] {
     return employees;
 }
+
+/**
+ * Gets an employee by their ID
+ * @param id - The employee ID to search for
+ * @returns The employee with the given ID, or undefined if not found
+ */
+export function getEmployeeById(id: number): Employee | undefined {
+    return employees.find(employee => employee.id === id);
+}
+
