@@ -30,3 +30,12 @@ export function createBranch(branchData: Omit<Branch, 'id'>): Branch {
 export function getAllBranches(): Branch[] {
     return branches;
 }
+
+/**
+ * Gets a branch by its ID
+ * @param id - The branch ID to search for
+ * @returns The branch with the given ID, or undefined if not found
+ */
+export function getBranchById(id: number): Branch | undefined {
+    return branches.find(branch => branch.id === id);
+}
