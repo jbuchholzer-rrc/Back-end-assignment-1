@@ -1,10 +1,30 @@
+/**
+ * @fileoverview Employee Controller - Handles HTTP requests for employee operations.
+ * This module acts as the bridge between the HTTP routes and the employee service layer.
+ * It processes incoming requests, validates data, calls the appropriate service functions,
+ * and sends back HTTP responses with proper status codes.
+ *
+ * Main Controller Functions:
+ * - createEmployeeController: Handles POST requests to create new employees
+ * - getAllEmployeesController: Handles GET requests to retrieve all employees
+ * - getEmployeeByIdController: Handles GET requests to find employees by ID
+ * - updateEmployeeController: Handles PUT requests to update employee data
+ * - deleteEmployeeController: Handles DELETE requests to remove employees
+ * - getEmployeesByBranchController: Handles GET requests to filter employees by branch
+ * - getEmployeesByDepartmentController: Handles GET requests to filter employees by department
+ *
+ * @author Jack Buchholzer
+ * @module controllers/employeeController
+ */
+
 import { Request, Response } from 'express';
 import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee, deleteEmployee, getEmployeesByBranch, getEmployeesByDepartment } from '../services/employeeService';
 
 /**
  * Controller function to handle employee creation
+ * Validates required fields and creates a new employee record
  * @param req - Express Request object containing employee data in body
- * @param res - Express Response object
+ * @param res - Express Response object to send back the result
  */
 export function createEmployeeController(req: Request, res: Response): void {
     try {
@@ -43,8 +63,9 @@ export function createEmployeeController(req: Request, res: Response): void {
 
 /**
  * Controller function to retrieve all employees
- * @param req - Express Request object
- * @param res - Express Response object
+ * Returns the complete list of all employees in the system
+ * @param _req - Express Request object (unused, prefixed with underscore)
+ * @param res - Express Response object to send back the employee list
  */
 export function getAllEmployeesController(_req: Request, res: Response): void {
     try {
@@ -64,8 +85,9 @@ export function getAllEmployeesController(_req: Request, res: Response): void {
 
 /**
  * Controller function to retrieve a specific employee by ID
- * @param req - Express Request object with id parameter
- * @param res - Express Response object
+ * Validates the ID and returns the employee if found, or 404 if not found
+ * @param req - Express Request object with id parameter in the URL
+ * @param res - Express Response object to send back the employee or error
  */
 export function getEmployeeByIdController(req: Request, res: Response): void {
     try {
@@ -99,8 +121,9 @@ export function getEmployeeByIdController(req: Request, res: Response): void {
 
 /**
  * Controller function to update an existing employee
+ * Allows partial updates - only the fields provided in the request will be changed
  * @param req - Express Request object with id parameter and update data in body
- * @param res - Express Response object
+ * @param res - Express Response object to send back the updated employee or error
  */
 export function updateEmployeeController(req: Request, res: Response): void {
     try {
@@ -137,8 +160,9 @@ export function updateEmployeeController(req: Request, res: Response): void {
 
 /**
  * Controller function to delete an employee
- * @param req - Express Request object with id parameter
- * @param res - Express Response object
+ * Removes the employee from the system permanently
+ * @param req - Express Request object with id parameter in the URL
+ * @param res - Express Response object with 204 status on success, 404 if not found
  */
 export function deleteEmployeeController(req: Request, res: Response): void {
     try {
@@ -172,8 +196,9 @@ export function deleteEmployeeController(req: Request, res: Response): void {
 
 /**
  * Controller function to retrieve employees by branch
- * @param req - Express Request object with branchId parameter
- * @param res - Express Response object
+ * Filters and returns only employees who work at the specified branch location
+ * @param req - Express Request object with branchId parameter in the URL
+ * @param res - Express Response object to send back the filtered employee list
  */
 export function getEmployeesByBranchController(req: Request, res: Response): void {
     try {
@@ -202,8 +227,9 @@ export function getEmployeesByBranchController(req: Request, res: Response): voi
 
 /**
  * Controller function to retrieve employees by department
- * @param req - Express Request object with department parameter
- * @param res - Express Response object
+ * Filters and returns only employees who work in the specified department
+ * @param req - Express Request object with department parameter in the URL
+ * @param res - Express Response object to send back the filtered employee list
  */
 export function getEmployeesByDepartmentController(req: Request, res: Response): void {
     try {

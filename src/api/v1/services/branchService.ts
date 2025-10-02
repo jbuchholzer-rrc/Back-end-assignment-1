@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Branch Service - Handles all business logic for branch data management.
+ * This module provides functions to create, read, update, and delete branch records.
+ * Branches represent physical locations where the company operates. All data is stored in memory.
+ *
+ * Main Functions:
+ * - createBranch: Add a new branch location to the system
+ * - getAllBranches: Retrieve all branch locations
+ * - getBranchById: Find a specific branch by its ID
+ * - updateBranch: Modify branch information (name, address, phone)
+ * - deleteBranch: Remove a branch from the system
+ *
+ * @author Jack Buchholzer
+ * @module services/branchService
+ */
+
 import { Branch } from '../../../data/branches';
 
 // In-memory storage for branches

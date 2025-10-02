@@ -1,7 +1,18 @@
 /**
- * Branch Routes
- * This file defines all the routes for branch-related operations
- * including create, read, update, and delete functionality.
+ * @fileoverview Branch Routes - Defines all HTTP route endpoints for branch operations.
+ * This module sets up the Express router and maps URL paths to controller functions.
+ * Each route handles a specific HTTP method (GET, POST, PUT, DELETE) and connects
+ * incoming requests to the appropriate controller function for branch locations.
+ *
+ * Routes Defined:
+ * - POST /branches - Create a new branch location
+ * - GET /branches - Retrieve all branch locations
+ * - GET /branches/:id - Get a specific branch by ID
+ * - PUT /branches/:id - Update a branch's information
+ * - DELETE /branches/:id - Remove a branch location
+ *
+ * @author Jack Buchholzer
+ * @module routes/branchRoutes
  */
 
 import { Router } from 'express';

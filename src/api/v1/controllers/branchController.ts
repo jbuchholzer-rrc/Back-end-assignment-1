@@ -1,10 +1,28 @@
+/**
+ * @fileoverview Branch Controller - Handles HTTP requests for branch operations.
+ * This module acts as the bridge between the HTTP routes and the branch service layer.
+ * It processes incoming requests for branch locations, validates data, calls service functions,
+ * and sends back HTTP responses with proper status codes.
+ *
+ * Main Controller Functions:
+ * - createBranchController: Handles POST requests to create new branch locations
+ * - getAllBranchesController: Handles GET requests to retrieve all branches
+ * - getBranchByIdController: Handles GET requests to find branches by ID
+ * - updateBranchController: Handles PUT requests to update branch information
+ * - deleteBranchController: Handles DELETE requests to remove branches
+ *
+ * @author Jack Buchholzer
+ * @module controllers/branchController
+ */
+
 import { Request, Response } from 'express';
 import { createBranch, getAllBranches, getBranchById, updateBranch, deleteBranch } from '../services/branchService';
 
 /**
  * Controller function to handle branch creation
- * @param req - Express Request object containing branch data in body
- * @param res - Express Response object
+ * Creates a new branch location in the system
+ * @param req - Express Request object containing branch data (name, address, phone) in body
+ * @param res - Express Response object to send back the created branch
  */
 export function createBranchController(req: Request, res: Response): void {
     try {
@@ -34,8 +52,9 @@ export function createBranchController(req: Request, res: Response): void {
 
 /**
  * Controller function to retrieve all branches
- * @param req - Express Request object
- * @param res - Express Response object
+ * Returns the complete list of all branch locations in the system
+ * @param _req - Express Request object (unused, prefixed with underscore)
+ * @param res - Express Response object to send back the branch list
  */
 export function getAllBranchesController(_req: Request, res: Response): void {
     try {
@@ -55,8 +74,9 @@ export function getAllBranchesController(_req: Request, res: Response): void {
 
 /**
  * Controller function to retrieve a specific branch by ID
- * @param req - Express Request object with id parameter
- * @param res - Express Response object
+ * Validates the ID and returns the branch if found, or 404 if not found
+ * @param req - Express Request object with id parameter in the URL
+ * @param res - Express Response object to send back the branch or error
  */
 export function getBranchByIdController(req: Request, res: Response): void {
     try {
@@ -90,8 +110,9 @@ export function getBranchByIdController(req: Request, res: Response): void {
 
 /**
  * Controller function to update an existing branch
+ * Allows partial updates - only the fields provided in the request will be changed
  * @param req - Express Request object with id parameter and update data in body
- * @param res - Express Response object
+ * @param res - Express Response object to send back the updated branch or error
  */
 export function updateBranchController(req: Request, res: Response): void {
     try {
@@ -128,8 +149,9 @@ export function updateBranchController(req: Request, res: Response): void {
 
 /**
  * Controller function to delete a branch
- * @param req - Express Request object with id parameter
- * @param res - Express Response object
+ * Removes the branch location from the system permanently
+ * @param req - Express Request object with id parameter in the URL
+ * @param res - Express Response object with 204 status on success, 404 if not found
  */
 export function deleteBranchController(req: Request, res: Response): void {
     try {

@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Employee Service - Handles all business logic for employee data management.
+ * This module provides functions to create, read, update, and delete employee records,
+ * as well as filter employees by branch or department. All data is stored in memory.
+ *
+ * Main Functions:
+ * - createEmployee: Add a new employee to the system
+ * - getAllEmployees: Retrieve all employees
+ * - getEmployeeById: Find a specific employee by their ID
+ * - updateEmployee: Modify employee information
+ * - deleteEmployee: Remove an employee from the system
+ * - getEmployeesByBranch: Get all employees working at a specific branch
+ * - getEmployeesByDepartment: Get all employees in a specific department
+ *
+ * @author Jack Buchholzer
+ * @module services/employeeService
+ */
+
 import { Employee } from '../../../data/employees';
 
 // In-memory storage for employees

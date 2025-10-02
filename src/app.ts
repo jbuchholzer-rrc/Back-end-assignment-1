@@ -12,7 +12,7 @@ app.use(morgan("combined"));
 app.use(express.json());
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
     res.status(200).send("Server is healthy");
 });
 
