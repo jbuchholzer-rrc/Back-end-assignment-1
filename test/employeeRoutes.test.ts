@@ -149,6 +149,15 @@ describe("Employee Routes", () => {
             expect(updateResponse.status).toBe(200);
             expect(updateResponse.body.position).toBe(updatedPosition);
         });
+
+        // Test updating a non-existent employee returns 404
+        it("should return 404 when updating non-existent employee", async () => {
+            const response = await request(app)
+                .put("/employees/99999")
+                .send({ name: "Updated Name" });
+
+            expect(response.status).toBe(404);
+        });
     });
 
     describe("DELETE /employees/:id", () => {
@@ -204,6 +213,14 @@ describe("Employee Routes", () => {
                 .get(`/employees/${createdEmployeeId}`);
 
             expect(getResponse.status).toBe(404);
+        });
+
+        // Test deleting a non-existent employee returns 404
+        it("should return 404 when deleting non-existent employee", async () => {
+            const response = await request(app)
+                .delete("/employees/99999");
+
+            expect(response.status).toBe(404);
         });
     });
 

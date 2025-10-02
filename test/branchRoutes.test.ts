@@ -104,5 +104,62 @@ describe("Branch Routes", () => {
             expect(updateResponse.status).toBe(200);
             expect(updateResponse.body.name).toBe(updatedName);
         });
+
+        // Test updating a branch address
+        it("should update a branch address", async () => {
+            // First, create a branch with address "123 Main St"
+            const newBranch = {
+                name: "Test Branch",
+                address: "123 Main St",
+                phone: "416-555-4000"
+            };
+
+            const createResponse = await request(app)
+                .post("/branches")
+                .send(newBranch);
+
+            const createdBranchId = createResponse.body.id;
+
+            // Then, update the branch address to "456 Oak Ave"
+            const updatedAddress = "456 Oak Ave";
+            const updateResponse = await request(app)
+                .put(`/branches/${createdBranchId}`)
+                .send({ address: updatedAddress });
+
+            expect(updateResponse.status).toBe(200);
+            expect(updateResponse.body.address).toBe(updatedAddress);
+        });
+    });
+
+    describe("DELETE /branches/:id", () => {
+        // Test deleting a branch
+        it("should delete a branch", async () => {
+            // First, create a branch
+            const newBranch = {
+                name: "Branch to Delete",
+                address: "111 Delete St, Halifax, NS, B3H 1A1",
+                phone: "902-555-5000"
+            };
+
+            const createResponse = await request(app)
+                .post("/branches")
+                .send(newBranch);
+
+            const createdBranchId = createResponse.body.id;
+
+            // Then, delete the branch
+            const deleteResponse = await request(app)
+                .delete(`/branches/${createdBranchId}`);
+
+            expect(deleteResponse.status).toBe(204);
+        });
+
+        // Test deleting non-existent branch returns 404
+        it("should return 404 when deleting non-existent branch", async () => {
+            const response = await request(app)
+                .delete("/branches/99999");
+
+            expect(response.status).toBe(404);
+        });
     });
 });
