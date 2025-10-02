@@ -227,14 +227,14 @@ describe("Employee Routes", () => {
     describe("GET /employees/branch/:branchId", () => {
         // Test getting employees from a specific branch
         it("should get employees from a specific branch", async () => {
-            // Create 2 employees with branchId 1
+            // Create 2 employees with branchId 999 (unique branch)
             const employee1 = {
                 name: "Mike Brown",
                 position: "Developer",
                 department: "IT",
                 email: "mike.brown@pixell-river.com",
                 phone: "604-555-1111",
-                branchId: 1
+                branchId: 999
             };
 
             const employee2 = {
@@ -243,7 +243,7 @@ describe("Employee Routes", () => {
                 department: "Design",
                 email: "lisa.white@pixell-river.com",
                 phone: "604-555-2222",
-                branchId: 1
+                branchId: 999
             };
 
             const employee3 = {
@@ -252,19 +252,20 @@ describe("Employee Routes", () => {
                 department: "Management",
                 email: "kevin.green@pixell-river.com",
                 phone: "604-555-3333",
-                branchId: 2
+                branchId: 998
             };
 
             await request(app).post("/employees").send(employee1);
             await request(app).post("/employees").send(employee2);
             await request(app).post("/employees").send(employee3);
 
-            // Get employees from branch 1
+            // Get employees from branch 999
             const response = await request(app)
-                .get("/employees/branch/1");
+                .get("/employees/branch/999");
 
             expect(response.status).toBe(200);
             expect(response.body).toHaveLength(2);
+            expect(response.body.every((emp: any) => emp.branchId === 999)).toBe(true);
         });
     });
 

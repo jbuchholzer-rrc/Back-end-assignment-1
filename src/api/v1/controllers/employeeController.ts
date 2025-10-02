@@ -11,6 +11,12 @@ export function createEmployeeController(req: Request, res: Response): void {
         // Extract employee data from request body
         const { name, position, department, email, phone, branchId } = req.body;
 
+        // Validate required fields
+        if (!name || !position || !department || !email || !phone || branchId === undefined) {
+            res.status(400).json({ error: 'Missing required fields' });
+            return;
+        }
+
         // Create employee object without ID (service will generate it)
         const employeeData = {
             name,
