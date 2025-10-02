@@ -39,3 +39,20 @@ export function getAllBranches(): Branch[] {
 export function getBranchById(id: number): Branch | undefined {
     return branches.find(branch => branch.id === id);
 }
+
+/**
+ * Updates a branch with new data
+ * @param id - The branch ID to update
+ * @param updateData - Partial branch data to update
+ * @returns The updated branch, or undefined if not found
+ */
+export function updateBranch(id: number, updateData: Partial<Omit<Branch, 'id'>>): Branch | undefined {
+    const branchIndex = branches.findIndex(branch => branch.id === id);
+
+    if (branchIndex === -1) {
+        return undefined;
+    }
+
+    branches[branchIndex] = { ...branches[branchIndex], ...updateData };
+    return branches[branchIndex];
+}
