@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee, deleteEmployee } from '../services/employeeService';
+import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee, deleteEmployee, getEmployeesByBranch, getEmployeesByDepartment } from '../services/employeeService';
 
 /**
  * Controller function to handle employee creation
@@ -159,6 +159,60 @@ export function deleteEmployeeController(req: Request, res: Response): void {
         // Handle any errors that occur during deletion
         res.status(500).json({
             error: 'Failed to delete employee',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+}
+
+/**
+ * Controller function to retrieve employees by branch
+ * @param req - Express Request object with branchId parameter
+ * @param res - Express Response object
+ */
+export function getEmployeesByBranchController(req: Request, res: Response): void {
+    try {
+        // Extract and parse branch ID from request parameters
+        const branchId = parseInt(req.params.branchId);
+
+        // Validate that branch ID is a valid number
+        if (isNaN(branchId)) {
+            res.status(400).json({ error: 'Invalid branch ID' });
+            return;
+        }
+
+        // Call service layer to get employees for the branch
+        const employees = getEmployeesByBranch(branchId);
+
+        // Return 200 OK status with the filtered employee array
+        res.status(200).json(employees);
+    } catch (error) {
+        // Handle any errors that occur during retrieval
+        res.status(500).json({
+            error: 'Failed to retrieve employees by branch',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+}
+
+/**
+ * Controller function to retrieve employees by department
+ * @param req - Express Request object with department parameter
+ * @param res - Express Response object
+ */
+export function getEmployeesByDepartmentController(req: Request, res: Response): void {
+    try {
+        // Extract department from request parameters
+        const department = req.params.department;
+
+        // Call service layer to get employees in the department
+        const employees = getEmployeesByDepartment(department);
+
+        // Return 200 OK status with the filtered employee array
+        res.status(200).json(employees);
+    } catch (error) {
+        // Handle any errors that occur during retrieval
+        res.status(500).json({
+            error: 'Failed to retrieve employees by department',
             message: error instanceof Error ? error.message : 'Unknown error'
         });
     }
