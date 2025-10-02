@@ -10,7 +10,9 @@ import {
     getAllEmployeesController,
     getEmployeeByIdController,
     updateEmployeeController,
-    deleteEmployeeController
+    deleteEmployeeController,
+    getEmployeesByBranchController,
+    getEmployeesByDepartmentController
 } from '../controllers/employeeController';
 
 const router = Router();
@@ -20,6 +22,13 @@ router.post('/employees', createEmployeeController);
 
 // GET /employees - Get all employees
 router.get('/employees', getAllEmployeesController);
+
+// Logical operation endpoints - Filter employees by specific criteria
+// GET /employees/branch/:branchId - Get employees by branch
+router.get('/employees/branch/:branchId', getEmployeesByBranchController);
+
+// GET /employees/department/:department - Get employees by department
+router.get('/employees/department/:department', getEmployeesByDepartmentController);
 
 // GET /employees/:id - Get a specific employee by ID
 router.get('/employees/:id', getEmployeeByIdController);
