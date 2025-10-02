@@ -91,4 +91,35 @@ describe("Employee Routes", () => {
             expect(response.status).toBe(404);
         });
     });
+
+    describe("PUT /employees/:id", () => {
+        // Test updating an employee's name
+        it("should update an employee's name", async () => {
+            // First, create an employee
+            const newEmployee = {
+                name: "Bob Johnson",
+                position: "Product Manager",
+                department: "Product",
+                email: "bob.johnson@pixell-river.com",
+                phone: "604-555-9999",
+                branchId: 1
+            };
+
+            const createResponse = await request(app)
+                .post("/employees")
+                .send(newEmployee);
+
+            const createdEmployeeId = createResponse.body.id;
+
+            // Then, update the employee's name
+            const updatedName = "Robert Johnson";
+            const updateResponse = await request(app)
+                .put(`/employees/${createdEmployeeId}`)
+                .send({ name: updatedName });
+
+            expect(updateResponse.status).toBe(200);
+            expect(updateResponse.body.name).toBe(updatedName);
+            expect(updateResponse.body.id).toBe(createdEmployeeId);
+        });
+    });
 });
