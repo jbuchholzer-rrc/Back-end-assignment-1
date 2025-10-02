@@ -73,3 +73,12 @@ export function deleteEmployee(id: number): boolean {
     return true;
 }
 
+/**
+ * Gets all employees for a specific branch
+ * Filters employees by their branchId
+ * @param branchId - The branch ID to filter by
+ * @returns Array of employees belonging to the specified branch
+ */
+export function getEmployeesByBranch(branchId: number): Employee[] {
+    return employees.filter(employee => employee.branchId === branchId);
+}
