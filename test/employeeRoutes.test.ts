@@ -176,5 +176,34 @@ describe("Employee Routes", () => {
 
             expect(deleteResponse.status).toBe(204);
         });
+
+        // Test verifying deleted employees can't be retrieved
+        it("should verify deleted employee cannot be retrieved", async () => {
+            // First, create an employee
+            const newEmployee = {
+                name: "Emma Davis",
+                position: "HR Manager",
+                department: "Human Resources",
+                email: "emma.davis@pixell-river.com",
+                phone: "604-555-3333",
+                branchId: 1
+            };
+
+            const createResponse = await request(app)
+                .post("/employees")
+                .send(newEmployee);
+
+            const createdEmployeeId = createResponse.body.id;
+
+            // Then, delete the employee
+            await request(app)
+                .delete(`/employees/${createdEmployeeId}`);
+
+            // Finally, try to retrieve the deleted employee
+            const getResponse = await request(app)
+                .get(`/employees/${createdEmployeeId}`);
+
+            expect(getResponse.status).toBe(404);
+        });
     });
 });
