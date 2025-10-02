@@ -150,4 +150,31 @@ describe("Employee Routes", () => {
             expect(updateResponse.body.position).toBe(updatedPosition);
         });
     });
+
+    describe("DELETE /employees/:id", () => {
+        // Test deleting an employee successfully
+        it("should delete an employee successfully", async () => {
+            // First, create an employee
+            const newEmployee = {
+                name: "Tom Wilson",
+                position: "Accountant",
+                department: "Finance",
+                email: "tom.wilson@pixell-river.com",
+                phone: "604-555-4444",
+                branchId: 2
+            };
+
+            const createResponse = await request(app)
+                .post("/employees")
+                .send(newEmployee);
+
+            const createdEmployeeId = createResponse.body.id;
+
+            // Then, delete the employee
+            const deleteResponse = await request(app)
+                .delete(`/employees/${createdEmployeeId}`);
+
+            expect(deleteResponse.status).toBe(204);
+        });
+    });
 });
