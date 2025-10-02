@@ -43,4 +43,66 @@ describe("Branch Routes", () => {
             expect(response.body.phone).toBe(newBranch.phone);
         });
     });
+
+    describe("GET /branches", () => {
+        // Test getting all branches
+        it("should get all branches", async () => {
+            const response = await request(app).get("/branches");
+
+            expect(response.status).toBe(200);
+            expect(Array.isArray(response.body)).toBe(true);
+        });
+    });
+
+    describe("GET /branches/:id", () => {
+        // Test retrieving a branch by its id
+        it("should retrieve a branch by its id", async () => {
+            // First, create a branch
+            const newBranch = {
+                name: "Mississauga Branch",
+                address: "789 Square One Dr, Mississauga, ON, L5B 1M2",
+                phone: "905-555-2000"
+            };
+
+            const createResponse = await request(app)
+                .post("/branches")
+                .send(newBranch);
+
+            const createdBranchId = createResponse.body.id;
+
+            // Then, retrieve the branch by id
+            const getResponse = await request(app)
+                .get(`/branches/${createdBranchId}`);
+
+            expect(getResponse.status).toBe(200);
+            expect(getResponse.body.id).toBe(createdBranchId);
+        });
+    });
+
+    describe("PUT /branches/:id", () => {
+        // Test updating a branch name
+        it("should update a branch name", async () => {
+            // First, create a branch
+            const newBranch = {
+                name: "Old Branch Name",
+                address: "999 Test St, Ottawa, ON, K1A 0B1",
+                phone: "613-555-3000"
+            };
+
+            const createResponse = await request(app)
+                .post("/branches")
+                .send(newBranch);
+
+            const createdBranchId = createResponse.body.id;
+
+            // Then, update the branch name
+            const updatedName = "New Branch Name";
+            const updateResponse = await request(app)
+                .put(`/branches/${createdBranchId}`)
+                .send({ name: updatedName });
+
+            expect(updateResponse.status).toBe(200);
+            expect(updateResponse.body.name).toBe(updatedName);
+        });
+    });
 });
