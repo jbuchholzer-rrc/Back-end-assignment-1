@@ -82,5 +82,13 @@ describe("Employee Routes", () => {
             expect(getResponse.body.id).toBe(createdEmployeeId);
             expect(getResponse.body.name).toBe(newEmployee.name);
         });
+
+        // Test retrieving a non-existent employee returns 404
+        it("should return 404 when employee not found", async () => {
+            const response = await request(app)
+                .get("/employees/99999");
+
+            expect(response.status).toBe(404);
+        });
     });
 });
