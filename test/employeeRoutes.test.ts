@@ -121,5 +121,33 @@ describe("Employee Routes", () => {
             expect(updateResponse.body.name).toBe(updatedName);
             expect(updateResponse.body.id).toBe(createdEmployeeId);
         });
+
+        // Test updating an employee's position
+        it("should update an employee's position", async () => {
+            // First, create an employee with Junior Developer position
+            const newEmployee = {
+                name: "Sarah Lee",
+                position: "Junior Developer",
+                department: "Engineering",
+                email: "sarah.lee@pixell-river.com",
+                phone: "604-555-7777",
+                branchId: 3
+            };
+
+            const createResponse = await request(app)
+                .post("/employees")
+                .send(newEmployee);
+
+            const createdEmployeeId = createResponse.body.id;
+
+            // Then, update the employee's position to Senior Developer
+            const updatedPosition = "Senior Developer";
+            const updateResponse = await request(app)
+                .put(`/employees/${createdEmployeeId}`)
+                .send({ position: updatedPosition });
+
+            expect(updateResponse.status).toBe(200);
+            expect(updateResponse.body.position).toBe(updatedPosition);
+        });
     });
 });
