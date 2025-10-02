@@ -56,3 +56,19 @@ export function updateBranch(id: number, updateData: Partial<Omit<Branch, 'id'>>
     branches[branchIndex] = { ...branches[branchIndex], ...updateData };
     return branches[branchIndex];
 }
+
+/**
+ * Deletes a branch by ID
+ * @param id - The branch ID to delete
+ * @returns True if branch was deleted, false if not found
+ */
+export function deleteBranch(id: number): boolean {
+    const branchIndex = branches.findIndex(branch => branch.id === id);
+
+    if (branchIndex === -1) {
+        return false;
+    }
+
+    branches.splice(branchIndex, 1);
+    return true;
+}
