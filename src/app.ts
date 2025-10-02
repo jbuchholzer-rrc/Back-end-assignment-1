@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Health check endpoint
 app.get("/health", (_req, res) => {
-    res.status(200).send("Server is healthy");
+    res.status(200).send("Server is healthy!");
 });
 
 // Routes

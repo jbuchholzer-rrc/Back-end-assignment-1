@@ -16,11 +16,11 @@
  * @module services/employeeService
  */
 
-import { Employee } from '../../../data/employees';
+import { Employee, employees as employeeData } from '../../../data/employees';
 
 // In-memory storage for employees
-let employees: Employee[] = [];
-let nextId = 1;
+let employees: Employee[] = employeeData;
+let nextId = 36;
 
 /**
  * Creates a new employee with auto-generated ID

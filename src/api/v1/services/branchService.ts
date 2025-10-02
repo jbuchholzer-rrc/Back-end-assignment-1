@@ -14,11 +14,11 @@
  * @module services/branchService
  */
 
-import { Branch } from '../../../data/branches';
+import { Branch, branches as branchData } from '../../../data/branches';
 
 // In-memory storage for branches
-let branches: Branch[] = [];
-let nextId = 1;
+let branches: Branch[] = branchData;
+let nextId = 11;
 
 /**
  * Creates a new branch with auto-generated ID
