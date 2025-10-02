@@ -22,3 +22,11 @@ export function createBranch(branchData: Omit<Branch, 'id'>): Branch {
     // Return the created branch
     return newBranch;
 }
+
+/**
+ * Gets all branches
+ * @returns Array of all branches
+ */
+export function getAllBranches(): Branch[] {
+    return branches;
+}
