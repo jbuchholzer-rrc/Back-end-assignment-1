@@ -206,4 +206,77 @@ describe("Employee Routes", () => {
             expect(getResponse.status).toBe(404);
         });
     });
+
+    describe("GET /employees/branch/:branchId", () => {
+        // Test getting employees from a specific branch
+        it("should get employees from a specific branch", async () => {
+            // Create 2 employees with branchId 1
+            const employee1 = {
+                name: "Mike Brown",
+                position: "Developer",
+                department: "IT",
+                email: "mike.brown@pixell-river.com",
+                phone: "604-555-1111",
+                branchId: 1
+            };
+
+            const employee2 = {
+                name: "Lisa White",
+                position: "Designer",
+                department: "Design",
+                email: "lisa.white@pixell-river.com",
+                phone: "604-555-2222",
+                branchId: 1
+            };
+
+            const employee3 = {
+                name: "Kevin Green",
+                position: "Manager",
+                department: "Management",
+                email: "kevin.green@pixell-river.com",
+                phone: "604-555-3333",
+                branchId: 2
+            };
+
+            await request(app).post("/employees").send(employee1);
+            await request(app).post("/employees").send(employee2);
+            await request(app).post("/employees").send(employee3);
+
+            // Get employees from branch 1
+            const response = await request(app)
+                .get("/employees/branch/1");
+
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveLength(2);
+        });
+    });
+
+    describe("GET /employees", () => {
+        // Test verifying all employee properties are returned
+        it("should return all employee properties", async () => {
+            // Create an employee with all fields filled
+            const newEmployee = {
+                name: "Rachel Adams",
+                position: "Business Analyst",
+                department: "Operations",
+                email: "rachel.adams@pixell-river.com",
+                phone: "604-555-8888",
+                branchId: 3
+            };
+
+            await request(app).post("/employees").send(newEmployee);
+
+            // Get all employees
+            const response = await request(app).get("/employees");
+
+            expect(response.status).toBe(200);
+            expect(response.body[0]).toHaveProperty("id");
+            expect(response.body[0]).toHaveProperty("name");
+            expect(response.body[0]).toHaveProperty("position");
+            expect(response.body[0]).toHaveProperty("department");
+            expect(response.body[0]).toHaveProperty("email");
+            expect(response.body[0]).toHaveProperty("phone");
+            expect(response.body[0]).toHaveProperty("branchId");
+        });
+    });
 });
