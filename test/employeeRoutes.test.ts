@@ -15,6 +15,7 @@ describe("Employee Routes", () => {
 
     describe("POST /employees", () => {
         // Test creating a new employee with valid data
+        // This test verifies Firestore integration by creating a real document
         it("should create a new employee successfully", async () => {
             const newEmployee = {
                 name: "John Doe",
@@ -29,8 +30,15 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(newEmployee);
 
+            // Verify successful creation with 201 status
             expect(response.status).toBe(201);
+            
+            // Verify Firestore-generated ID is present
             expect(response.body).toHaveProperty("id");
+            expect(response.body.id).toBeDefined();
+            expect(typeof response.body.id).toBe("number");
+            
+            // Verify all fields are returned correctly from Firestore
             expect(response.body.name).toBe(newEmployee.name);
             expect(response.body.position).toBe(newEmployee.position);
             expect(response.body.department).toBe(newEmployee.department);
