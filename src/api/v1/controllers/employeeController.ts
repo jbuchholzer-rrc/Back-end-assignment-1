@@ -77,10 +77,10 @@ export async function createEmployeeController(req: Request, res: Response): Pro
  * @param _req - Express Request object (unused, prefixed with underscore)
  * @param res - Express Response object to send back the employee list
  */
-export function getAllEmployeesController(_req: Request, res: Response): void {
+export async function getAllEmployeesController(_req: Request, res: Response): Promise<void> {
     try {
         // Call service layer to get all employees
-        const employees = getAllEmployees();
+        const employees = await getAllEmployees();
 
         // Return 200 OK status with consistent response format
         const response: SuccessResponse<typeof employees> = {
@@ -90,10 +90,12 @@ export function getAllEmployeesController(_req: Request, res: Response): void {
         res.status(200).json(response);
     } catch (error) {
         // Handle any errors that occur during retrieval
-        res.status(500).json({
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to retrieve employees',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
 

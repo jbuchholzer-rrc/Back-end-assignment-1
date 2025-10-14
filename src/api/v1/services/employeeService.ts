@@ -17,7 +17,7 @@
  */
 
 import { Employee, employees as employeeData } from '../../../data/employees';
-import { createDocument } from '../repositories/firestoreRepository';
+import { createDocument, getDocuments } from '../repositories/firestoreRepository';
 
 // In-memory storage for employees
 let employees: Employee[] = employeeData;
@@ -56,10 +56,31 @@ export async function createEmployee(employeeData: Omit<Employee, 'id'>): Promis
 
 /**
  * Gets all employees
+ * Now fetching from Firestore instead of in-memory storage
  * @returns Array of all employees
  */
-export function getAllEmployees(): Employee[] {
-    return employees;
+export async function getAllEmployees(): Promise<Employee[]> {
+    try {
+        // Fetch all employee documents from Firestore
+        const snapshot = await getDocuments('employees');
+
+        // Convert Firestore documents to Employee array
+        const firestoreEmployees = snapshot.docs.map(doc => ({
+            id: nextId++,
+            ...doc.data()
+        })) as Employee[];
+
+        // Update in-memory array for backward compatibility
+        employees = firestoreEmployees;
+
+        return employees;
+    } catch (error) {
+        throw new Error(
+            `Failed to get employees: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
+    }
 }
 
 /**
