@@ -39,6 +39,26 @@ describe("Employee Routes", () => {
             expect(response.body.branchId).toBe(newEmployee.branchId);
         });
 
+        // Test validation accepts valid data
+        it("should accept employee with all valid fields", async () => {
+            const validEmployee = {
+                firstName: "Jane",
+                lastName: "Smith",
+                position: "Project Manager",
+                department: "Operations",
+                email: "jane.smith@pixell-river.com",
+                phone: "604-555-5678",
+                branchId: 2
+            };
+
+            const response = await request(app)
+                .post("/employees")
+                .send(validEmployee);
+
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty("id");
+        });
+
         // Test creating employee with missing required fields
         it("should fail to create employee with missing parameters", async () => {
             const incompleteEmployee = {
