@@ -6,7 +6,7 @@
  * Author: Jack Buchholzer
  */
 
-import { createEmployee } from '../src/api/v1/services/employeeService';
+import { createEmployee, getAllEmployees } from '../src/api/v1/services/employeeService';
 
 describe('Employee Service', () => {
     describe('createEmployee', () => {
@@ -36,6 +36,30 @@ describe('Employee Service', () => {
             expect(result.email).toBe(employeeData.email);
             expect(result.phone).toBe(employeeData.phone);
             expect(result.branchId).toBe(employeeData.branchId);
+        });
+    });
+
+    describe('getAllEmployees', () => {
+        // This test verifies the get all employees function from Firestore
+        it('should retrieve all employees as an array', async () => {
+            // Call the service to get all employees
+            const result = await getAllEmployees();
+
+            // Verify the result is an array
+            expect(Array.isArray(result)).toBe(true);
+
+            // Verify each item in the array has the correct Employee type structure
+            if (result.length > 0) {
+                result.forEach(employee => {
+                    expect(employee).toHaveProperty('id');
+                    expect(employee).toHaveProperty('name');
+                    expect(employee).toHaveProperty('position');
+                    expect(employee).toHaveProperty('department');
+                    expect(employee).toHaveProperty('email');
+                    expect(employee).toHaveProperty('phone');
+                    expect(employee).toHaveProperty('branchId');
+                });
+            }
         });
     });
 });
