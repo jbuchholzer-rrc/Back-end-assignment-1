@@ -17,7 +17,8 @@ describe("Employee Routes", () => {
         // Test creating a new employee with valid data
         it("should create a new employee successfully", async () => {
             const newEmployee = {
-                name: "John Doe",
+                firstName: "John",
+                lastName: "Doe",
                 position: "Software Developer",
                 department: "IT",
                 email: "john.doe@pixell-river.com",
@@ -31,7 +32,8 @@ describe("Employee Routes", () => {
 
             expect(response.status).toBe(201);
             expect(response.body).toHaveProperty("id");
-            expect(response.body.name).toBe(newEmployee.name);
+            expect(response.body.firstName).toBe(newEmployee.firstName);
+            expect(response.body.lastName).toBe(newEmployee.lastName);
             expect(response.body.position).toBe(newEmployee.position);
             expect(response.body.department).toBe(newEmployee.department);
             expect(response.body.email).toBe(newEmployee.email);
