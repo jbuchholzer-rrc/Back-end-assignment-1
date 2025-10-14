@@ -25,6 +25,22 @@ describe("Branch Routes", () => {
             expect(response.body).toHaveProperty("id");
         });
 
+        // Test validation with valid branch data
+        it("should accept branch with all valid fields", async () => {
+            const validBranch = {
+                name: "Toronto Branch",
+                address: "100 Queen St, Toronto, ON, M5H 2N2",
+                phone: "416-555-6000"
+            };
+
+            const response = await request(app)
+                .post("/branches")
+                .send(validBranch);
+
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty("id");
+        });
+
         // Test verifying branch data is returned correctly
         it("should return branch data correctly", async () => {
             const newBranch = {
