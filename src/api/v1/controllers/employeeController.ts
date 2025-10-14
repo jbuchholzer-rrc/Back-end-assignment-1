@@ -19,7 +19,7 @@
 
 import { Request, Response } from 'express';
 import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee, deleteEmployee, getEmployeesByBranch, getEmployeesByDepartment } from '../services/employeeService';
-import { SuccessResponse } from '../models/responseModels';
+import { SuccessResponse, ErrorResponse } from '../models/responseModels';
 
 /**
  * Controller function to handle employee creation
@@ -98,6 +98,7 @@ export function getAllEmployeesController(_req: Request, res: Response): void {
 /**
  * Controller function to retrieve a specific employee by ID
  * Validates the ID and returns the employee if found, or 404 if not found
+ * Uses consistent error handling
  * @param req - Express Request object with id parameter in the URL
  * @param res - Express Response object to send back the employee or error
  */
@@ -108,7 +109,11 @@ export function getEmployeeByIdController(req: Request, res: Response): void {
 
         // Validate that ID is a valid number
         if (isNaN(id)) {
-            res.status(400).json({ error: 'Invalid employee ID' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Invalid employee ID'
+            };
+            res.status(400).json(errorResponse);
             return;
         }
 
@@ -117,23 +122,30 @@ export function getEmployeeByIdController(req: Request, res: Response): void {
 
         // Return 404 if employee not found, otherwise return 200 with employee data
         if (!employee) {
-            res.status(404).json({ error: 'Employee not found' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Employee not found'
+            };
+            res.status(404).json(errorResponse);
             return;
         }
 
         res.status(200).json(employee);
     } catch (error) {
-        // Handle any errors that occur during retrieval
-        res.status(500).json({
+        // Handle any errors that occur during retrieval with consistent error format
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to retrieve employee',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
 
 /**
  * Controller function to update an existing employee
  * Allows partial updates - only the fields provided in the request will be changed
+ * Uses consistent error handling
  * @param req - Express Request object with id parameter and update data in body
  * @param res - Express Response object to send back the updated employee or error
  */
@@ -144,7 +156,11 @@ export function updateEmployeeController(req: Request, res: Response): void {
 
         // Validate that ID is a valid number
         if (isNaN(id)) {
-            res.status(400).json({ error: 'Invalid employee ID' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Invalid employee ID'
+            };
+            res.status(400).json(errorResponse);
             return;
         }
 
@@ -156,23 +172,30 @@ export function updateEmployeeController(req: Request, res: Response): void {
 
         // Return 404 if employee not found, otherwise return 200 with updated employee
         if (!updatedEmployee) {
-            res.status(404).json({ error: 'Employee not found' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Employee not found'
+            };
+            res.status(404).json(errorResponse);
             return;
         }
 
         res.status(200).json(updatedEmployee);
     } catch (error) {
-        // Handle any errors that occur during update
-        res.status(500).json({
+        // Handle any errors that occur during update with consistent error format
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to update employee',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
 
 /**
  * Controller function to delete an employee
  * Removes the employee from the system permanently
+ * Uses consistent error handling
  * @param req - Express Request object with id parameter in the URL
  * @param res - Express Response object with 204 status on success, 404 if not found
  */
@@ -183,7 +206,11 @@ export function deleteEmployeeController(req: Request, res: Response): void {
 
         // Validate that ID is a valid number
         if (isNaN(id)) {
-            res.status(400).json({ error: 'Invalid employee ID' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Invalid employee ID'
+            };
+            res.status(400).json(errorResponse);
             return;
         }
 
@@ -192,17 +219,23 @@ export function deleteEmployeeController(req: Request, res: Response): void {
 
         // Return 404 if employee not found, otherwise return 204 No Content
         if (!deleted) {
-            res.status(404).json({ error: 'Employee not found' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Employee not found'
+            };
+            res.status(404).json(errorResponse);
             return;
         }
 
         res.status(204).send();
     } catch (error) {
-        // Handle any errors that occur during deletion
-        res.status(500).json({
+        // Handle any errors that occur during deletion with consistent error format
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to delete employee',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
 
