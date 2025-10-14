@@ -7,8 +7,7 @@ import Joi from "joi";
  * Author: Jack Buchholzer
  */
 export const employeeSchema = Joi.object({
-    firstName: Joi.string().min(2).required(),
-    lastName: Joi.string().min(2).required(),
+    name: Joi.string().min(2).required(),
     position: Joi.string().required(),
     department: Joi.string().required(),
     email: Joi.string().email().required(),

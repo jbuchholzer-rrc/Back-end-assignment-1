@@ -17,8 +17,7 @@ describe("Employee Routes", () => {
         // Test creating a new employee with valid data
         it("should create a new employee successfully", async () => {
             const newEmployee = {
-                firstName: "John",
-                lastName: "Doe",
+                name: "John Doe",
                 position: "Software Developer",
                 department: "IT",
                 email: "john.doe@pixell-river.com",
@@ -32,8 +31,7 @@ describe("Employee Routes", () => {
 
             expect(response.status).toBe(201);
             expect(response.body).toHaveProperty("id");
-            expect(response.body.firstName).toBe(newEmployee.firstName);
-            expect(response.body.lastName).toBe(newEmployee.lastName);
+            expect(response.body.name).toBe(newEmployee.name);
             expect(response.body.position).toBe(newEmployee.position);
             expect(response.body.department).toBe(newEmployee.department);
             expect(response.body.email).toBe(newEmployee.email);
@@ -44,8 +42,7 @@ describe("Employee Routes", () => {
         // Test validation accepts valid data
         it("should accept employee with all valid fields", async () => {
             const validEmployee = {
-                firstName: "Jane",
-                lastName: "Smith",
+                name: "Jane Smith",
                 position: "Project Manager",
                 department: "Operations",
                 email: "jane.smith@pixell-river.com",
@@ -64,13 +61,12 @@ describe("Employee Routes", () => {
         // Test validation rejects missing fields
         it("should reject employee with missing required fields", async () => {
             const invalidEmployee = {
-                lastName: "Johnson",
                 position: "Analyst",
                 department: "Finance",
                 email: "johnson@pixell-river.com",
                 phone: "604-555-9999",
                 branchId: 3
-                // Missing firstName
+                // Missing name
             };
 
             const response = await request(app)
@@ -84,8 +80,7 @@ describe("Employee Routes", () => {
         // Test email validation
         it("should reject employee with invalid email format", async () => {
             const invalidEmailEmployee = {
-                firstName: "Tom",
-                lastName: "Brown",
+                name: "Tom Brown",
                 position: "Engineer",
                 department: "IT",
                 email: "notanemail",
