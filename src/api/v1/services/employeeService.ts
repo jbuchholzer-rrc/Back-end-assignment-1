@@ -17,7 +17,7 @@
  */
 
 import { Employee, employees as employeeData } from '../../../data/employees';
-import { createDocument, getDocuments } from '../repositories/firestoreRepository';
+import { createDocument, getDocuments, getDocumentById, updateDocument } from '../repositories/firestoreRepository';
 
 // In-memory storage for employees
 let employees: Employee[] = employeeData;
@@ -85,28 +85,68 @@ export async function getAllEmployees(): Promise<Employee[]> {
 
 /**
  * Gets an employee by their ID
+ * Retrieves employee data from Firestore
  * @param id - The employee ID to search for
  * @returns The employee with the given ID, or undefined if not found
  */
-export function getEmployeeById(id: number): Employee | undefined {
-    return employees.find(employee => employee.id === id);
+export async function getEmployeeById(id: number): Promise<Employee | undefined> {
+    try {
+        // Retrieve employee document from Firestore by ID
+        const doc = await getDocumentById('employees', id.toString());
+        
+        if (!doc) {
+            return undefined;
+        }
+        
+        const data = doc.data();
+        if (!data) {
+            return undefined;
+        }
+        
+        return {
+            id,
+            ...data
+        } as Employee;
+    } catch (error) {
+        throw new Error(
+            `Failed to get employee by ID: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
+    }
 }
 
 /**
  * Updates an employee with new data
+ * Updates employee data in Firestore
  * @param id - The employee ID to update
  * @param updateData - Partial employee data to update
  * @returns The updated employee, or undefined if not found
  */
-export function updateEmployee(id: number, updateData: Partial<Omit<Employee, 'id'>>): Employee | undefined {
-    const employeeIndex = employees.findIndex(employee => employee.id === id);
-
-    if (employeeIndex === -1) {
-        return undefined;
+export async function updateEmployee(id: number, updateData: Partial<Omit<Employee, 'id'>>): Promise<Employee | undefined> {
+    try {
+        // Check if employee exists before updating
+        const existingEmployee = await getEmployeeById(id);
+        
+        if (!existingEmployee) {
+            return undefined;
+        }
+        
+        // Update employee document in Firestore
+        await updateDocument<Partial<Omit<Employee, 'id'>>>('employees', id.toString(), updateData);
+        
+        // Return the updated employee
+        return {
+            ...existingEmployee,
+            ...updateData
+        };
+    } catch (error) {
+        throw new Error(
+            `Failed to update employee: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
     }
-
-    employees[employeeIndex] = { ...employees[employeeIndex], ...updateData };
-    return employees[employeeIndex];
 }
 
 /**
