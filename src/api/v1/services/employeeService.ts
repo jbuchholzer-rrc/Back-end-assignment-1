@@ -179,12 +179,30 @@ export async function deleteEmployee(id: number): Promise<boolean> {
 
 /**
  * Gets all employees for a specific branch
- * Filters employees by their branchId
+ * Fetches all employees from Firestore and filters by branchId
  * @param branchId - The branch ID to filter by
  * @returns Array of employees belonging to the specified branch
  */
-export function getEmployeesByBranch(branchId: number): Employee[] {
-    return employees.filter(employee => employee.branchId === branchId);
+export async function getEmployeesByBranch(branchId: number): Promise<Employee[]> {
+    try {
+        // Fetch all employee documents from Firestore
+        const snapshot = await getDocuments('employees');
+        
+        // Convert Firestore documents to Employee array and filter by branchId
+        const allEmployees = snapshot.docs.map(doc => ({
+            id: parseInt(doc.id) || 0,
+            ...doc.data()
+        })) as Employee[];
+        
+        // Filter employees by branch after fetching from Firestore
+        return allEmployees.filter(employee => employee.branchId === branchId);
+    } catch (error) {
+        throw new Error(
+            `Failed to get employees by branch: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
+    }
 }
 
 /**
