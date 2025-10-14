@@ -31,7 +31,7 @@ import {
     getEmployeesByDepartmentController
 } from '../controllers/employeeController';
 import { validate } from '../middleware/validationMiddleware';
-import { employeeSchema } from '../validation/employeeValidation';
+import { employeeSchema, employeeUpdateSchema } from '../validation/employeeValidation';
 
 const router = Router();
 
@@ -54,7 +54,7 @@ router.get('/employees/:id', getEmployeeByIdController);
 
 // PUT /employees/:id - Update an employee by ID
 // Validates employee data before updating
-router.put('/employees/:id', validate(employeeSchema), updateEmployeeController);
+router.put('/employees/:id', validate(employeeUpdateSchema), updateEmployeeController);
 
 // DELETE /employees/:id - Delete an employee by ID
 router.delete('/employees/:id', deleteEmployeeController);

@@ -24,7 +24,7 @@ import {
     deleteBranchController
 } from '../controllers/branchController';
 import { validate } from '../middleware/validationMiddleware';
-import { branchSchema } from '../validation/branchValidation';
+import { branchSchema, branchUpdateSchema } from '../validation/branchValidation';
 
 const router = Router();
 
@@ -40,7 +40,7 @@ router.get('/branches/:id', getBranchByIdController);
 
 // PUT /branches/:id - Update a branch by ID
 // Validates branch data before updating
-router.put('/branches/:id', validate(branchSchema), updateBranchController);
+router.put('/branches/:id', validate(branchUpdateSchema), updateBranchController);
 
 // DELETE /branches/:id - Delete a branch by ID
 router.delete('/branches/:id', deleteBranchController);
