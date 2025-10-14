@@ -53,7 +53,8 @@ router.get('/employees/department/:department', getEmployeesByDepartmentControll
 router.get('/employees/:id', getEmployeeByIdController);
 
 // PUT /employees/:id - Update an employee by ID
-router.put('/employees/:id', updateEmployeeController);
+// Validates employee data before updating
+router.put('/employees/:id', validate(employeeSchema), updateEmployeeController);
 
 // DELETE /employees/:id - Delete an employee by ID
 router.delete('/employees/:id', deleteEmployeeController);
