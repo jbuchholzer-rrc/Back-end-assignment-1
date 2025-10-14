@@ -17,7 +17,7 @@
  */
 
 import { Employee, employees as employeeData } from '../../../data/employees';
-import { createDocument, getDocuments, getDocumentById, updateDocument } from '../repositories/firestoreRepository';
+import { createDocument, getDocuments, getDocumentById, updateDocument, deleteDocument } from '../repositories/firestoreRepository';
 
 // In-memory storage for employees
 let employees: Employee[] = employeeData;
@@ -151,18 +151,30 @@ export async function updateEmployee(id: number, updateData: Partial<Omit<Employ
 
 /**
  * Deletes an employee by ID
+ * Deletes employee data from Firestore
  * @param id - The employee ID to delete
  * @returns True if employee was deleted, false if not found
  */
-export function deleteEmployee(id: number): boolean {
-    const employeeIndex = employees.findIndex(employee => employee.id === id);
-
-    if (employeeIndex === -1) {
-        return false;
+export async function deleteEmployee(id: number): Promise<boolean> {
+    try {
+        // Check if employee exists before deleting
+        const existingEmployee = await getEmployeeById(id);
+        
+        if (!existingEmployee) {
+            return false;
+        }
+        
+        // Delete employee document from Firestore
+        await deleteDocument('employees', id.toString());
+        
+        return true;
+    } catch (error) {
+        throw new Error(
+            `Failed to delete employee: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
     }
-
-    employees.splice(employeeIndex, 1);
-    return true;
 }
 
 /**
