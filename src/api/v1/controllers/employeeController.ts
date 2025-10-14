@@ -19,10 +19,12 @@
 
 import { Request, Response } from 'express';
 import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee, deleteEmployee, getEmployeesByBranch, getEmployeesByDepartment } from '../services/employeeService';
+import { SuccessResponse } from '../models/responseModels';
 
 /**
  * Controller function to handle employee creation
  * Validates required fields and creates a new employee record
+ * Uses consistent response format
  * @param req - Express Request object containing employee data in body
  * @param res - Express Response object to send back the result
  */
@@ -50,8 +52,13 @@ export function createEmployeeController(req: Request, res: Response): void {
         // Call service layer to create the employee
         const newEmployee = createEmployee(employeeData);
 
-        // Return 201 Created status with the newly created employee
-        res.status(201).json(newEmployee);
+        // Return 201 Created status with consistent response format
+        const response: SuccessResponse<typeof newEmployee> = {
+            success: true,
+            data: newEmployee,
+            message: "Employee created"
+        };
+        res.status(201).json(response);
     } catch (error) {
         // Handle any errors that occur during employee creation
         res.status(500).json({
@@ -64,6 +71,7 @@ export function createEmployeeController(req: Request, res: Response): void {
 /**
  * Controller function to retrieve all employees
  * Returns the complete list of all employees in the system
+ * Uses consistent response format
  * @param _req - Express Request object (unused, prefixed with underscore)
  * @param res - Express Response object to send back the employee list
  */
@@ -72,8 +80,12 @@ export function getAllEmployeesController(_req: Request, res: Response): void {
         // Call service layer to get all employees
         const employees = getAllEmployees();
 
-        // Return 200 OK status with the employee array
-        res.status(200).json(employees);
+        // Return 200 OK status with consistent response format
+        const response: SuccessResponse<typeof employees> = {
+            success: true,
+            data: employees
+        };
+        res.status(200).json(response);
     } catch (error) {
         // Handle any errors that occur during retrieval
         res.status(500).json({

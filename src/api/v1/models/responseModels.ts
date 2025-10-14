@@ -9,3 +9,15 @@ export interface SuccessResponse<T> {
     data: T;
     message?: string;
 }
+
+/**
+ * Response model for error API responses
+ * Provides consistent error format across the API
+ *
+ * Author: Jack Buchholzer
+ */
+export interface ErrorResponse {
+    success: boolean;
+    error: string;
+    details?: any;
+}
