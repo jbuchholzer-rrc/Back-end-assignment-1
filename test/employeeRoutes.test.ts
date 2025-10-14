@@ -79,6 +79,27 @@ describe("Employee Routes", () => {
             expect(response.body).toHaveProperty("message");
         });
 
+        // Test email validation
+        it("should reject employee with invalid email format", async () => {
+            const invalidEmailEmployee = {
+                firstName: "Tom",
+                lastName: "Brown",
+                position: "Engineer",
+                department: "IT",
+                email: "notanemail",
+                phone: "604-555-7777",
+                branchId: 1
+            };
+
+            const response = await request(app)
+                .post("/employees")
+                .send(invalidEmailEmployee);
+
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty("message");
+            expect(response.body.message).toContain("email");
+        });
+
         // Test creating employee with missing required fields
         it("should fail to create employee with missing parameters", async () => {
             const incompleteEmployee = {
