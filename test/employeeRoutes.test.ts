@@ -59,6 +59,26 @@ describe("Employee Routes", () => {
             expect(response.body).toHaveProperty("id");
         });
 
+        // Test validation rejects missing fields
+        it("should reject employee with missing required fields", async () => {
+            const invalidEmployee = {
+                lastName: "Johnson",
+                position: "Analyst",
+                department: "Finance",
+                email: "johnson@pixell-river.com",
+                phone: "604-555-9999",
+                branchId: 3
+                // Missing firstName
+            };
+
+            const response = await request(app)
+                .post("/employees")
+                .send(invalidEmployee);
+
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty("message");
+        });
+
         // Test creating employee with missing required fields
         it("should fail to create employee with missing parameters", async () => {
             const incompleteEmployee = {
