@@ -66,7 +66,8 @@ describe("Employee Routes", () => {
             expect(response.body).toHaveProperty("id");
         });
 
-        // Test validation rejects missing fields
+        // Test validation rejects missing required fields
+        // Joi schema requires: name (min 2 chars), position, department, email, phone, branchId
         it("should reject employee with missing required fields", async () => {
             const invalidEmployee = {
                 position: "Analyst",
@@ -74,24 +75,27 @@ describe("Employee Routes", () => {
                 email: "johnson@pixell-river.com",
                 phone: "604-555-9999",
                 branchId: 3
-                // Missing name
+                // Missing required field: name
             };
 
             const response = await request(app)
                 .post("/employees")
                 .send(invalidEmployee);
 
+            // Verify validation error response
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty("message");
+            expect(response.body.message).toContain("name");
         });
 
         // Test email validation
+        // Joi schema requires valid email format (user@domain.com)
         it("should reject employee with invalid email format", async () => {
             const invalidEmailEmployee = {
                 name: "Tom Brown",
                 position: "Engineer",
                 department: "IT",
-                email: "notanemail",
+                email: "notanemail",  // Invalid: missing @ and domain
                 phone: "604-555-7777",
                 branchId: 1
             };
@@ -100,24 +104,36 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(invalidEmailEmployee);
 
+            // Verify validation error specifically mentions email
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty("message");
-            expect(response.body.message).toContain("email");
+            expect(response.body.message.toLowerCase()).toContain("email");
         });
 
         // Test creating employee with missing required fields
+        // Joi schema requires all 6 fields: name, position, department, email, phone, branchId
         it("should fail to create employee with missing parameters", async () => {
             const incompleteEmployee = {
                 name: "Jane Doe",
                 position: "Manager"
-                // Missing department, email, phone, branchId
+                // Missing required fields: department, email, phone, branchId
             };
 
             const response = await request(app)
                 .post("/employees")
                 .send(incompleteEmployee);
 
+            // Verify validation error for missing fields
             expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty("message");
+            // Should mention at least one of the missing required fields
+            const message = response.body.message.toLowerCase();
+            const hasMissingField = 
+                message.includes("department") || 
+                message.includes("email") || 
+                message.includes("phone") || 
+                message.includes("branchid");
+            expect(hasMissingField).toBe(true);
         });
     });
 
