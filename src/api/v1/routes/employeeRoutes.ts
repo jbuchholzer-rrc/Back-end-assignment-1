@@ -30,11 +30,14 @@ import {
     getEmployeesByBranchController,
     getEmployeesByDepartmentController
 } from '../controllers/employeeController';
+import { validate } from '../middleware/validationMiddleware';
+import { employeeSchema } from '../validation/employeeValidation';
 
 const router = Router();
 
 // POST /employees - Create a new employee
-router.post('/employees', createEmployeeController);
+// Validates employee data before creating
+router.post('/employees', validate(employeeSchema), createEmployeeController);
 
 // GET /employees - Get all employees
 router.get('/employees', getAllEmployeesController);
