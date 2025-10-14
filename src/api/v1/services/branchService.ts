@@ -14,32 +14,29 @@
  * @module services/branchService
  */
 
-import { Branch, branches as branchData } from '../../../data/branches';
+import { Branch } from '../../../data/branches';
 import { createDocument, getDocuments, getDocumentById, updateDocument, deleteDocument } from '../repositories/firestoreRepository';
 
-// In-memory storage for branches
-let branches: Branch[] = branchData;
+// Counter for generating sequential branch IDs
 let nextId = 11;
 
 /**
  * Creates a new branch with auto-generated ID
- * Stores branch data in Firestore
+ * Stores branch data in Firestore with the ID as part of the document
  * @param branchData - Branch data without ID
  * @returns The created branch with generated ID
  */
 export async function createBranch(branchData: Omit<Branch, 'id'>): Promise<Branch> {
     try {
-        // Create document in Firestore with auto-generated ID
-        await createDocument<Omit<Branch, 'id'>>('branches', branchData);
-
-        // Create branch with numeric id for compatibility
+        // Create branch with numeric id
         const branch: Branch = {
             id: nextId++,
             ...branchData
         };
 
-        // Add to in-memory array for backward compatibility
-        branches.push(branch);
+        // Store the complete branch object (including ID) in Firestore
+        // Use the numeric ID as the document ID for easy retrieval
+        await createDocument<Branch>('branches', branch, branch.id.toString());
 
         // Return the created branch
         return branch;
@@ -63,13 +60,7 @@ export async function getAllBranches(): Promise<Branch[]> {
         const snapshot = await getDocuments('branches');
 
         // Convert Firestore documents to Branch array
-        const firestoreBranches = snapshot.docs.map(doc => ({
-            id: nextId++,
-            ...doc.data()
-        })) as Branch[];
-
-        // Update in-memory array for backward compatibility
-        branches = firestoreBranches;
+        const branches = snapshot.docs.map(doc => doc.data() as Branch);
 
         return branches;
     } catch (error) {
@@ -92,19 +83,12 @@ export async function getBranchById(id: number): Promise<Branch | undefined> {
         // Retrieve branch document from Firestore by ID
         const doc = await getDocumentById('branches', id.toString());
         
-        if (!doc) {
+        if (!doc || !doc.exists) {
             return undefined;
         }
         
-        const data = doc.data();
-        if (!data) {
-            return undefined;
-        }
-        
-        return {
-            id,
-            ...data
-        } as Branch;
+        // Return the branch data directly (it already contains the ID)
+        return doc.data() as Branch;
     } catch (error) {
         throw new Error(
             `Failed to get branch by ID: ${
@@ -130,14 +114,17 @@ export async function updateBranch(id: number, updateData: Partial<Omit<Branch, 
             return undefined;
         }
         
-        // Update branch document in Firestore
-        await updateDocument<Partial<Omit<Branch, 'id'>>>('branches', id.toString(), updateData);
-        
-        // Return the updated branch
-        return {
+        // Create the updated branch object
+        const updatedBranch: Branch = {
             ...existingBranch,
             ...updateData
         };
+        
+        // Update the entire branch document in Firestore
+        await updateDocument<Branch>('branches', id.toString(), updatedBranch);
+        
+        // Return the updated branch
+        return updatedBranch;
     } catch (error) {
         throw new Error(
             `Failed to update branch: ${

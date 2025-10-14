@@ -33,18 +33,19 @@ describe("Employee Routes", () => {
             // Verify successful creation with 201 status
             expect(response.status).toBe(201);
             
-            // Verify Firestore-generated ID is present
-            expect(response.body).toHaveProperty("id");
-            expect(response.body.id).toBeDefined();
-            expect(typeof response.body.id).toBe("number");
+            // Verify Firestore-generated ID is present in the data field
+            expect(response.body).toHaveProperty("data");
+            expect(response.body.data).toHaveProperty("id");
+            expect(response.body.data.id).toBeDefined();
+            expect(typeof response.body.data.id).toBe("number");
             
             // Verify all fields are returned correctly from Firestore
-            expect(response.body.name).toBe(newEmployee.name);
-            expect(response.body.position).toBe(newEmployee.position);
-            expect(response.body.department).toBe(newEmployee.department);
-            expect(response.body.email).toBe(newEmployee.email);
-            expect(response.body.phone).toBe(newEmployee.phone);
-            expect(response.body.branchId).toBe(newEmployee.branchId);
+            expect(response.body.data.name).toBe(newEmployee.name);
+            expect(response.body.data.position).toBe(newEmployee.position);
+            expect(response.body.data.department).toBe(newEmployee.department);
+            expect(response.body.data.email).toBe(newEmployee.email);
+            expect(response.body.data.phone).toBe(newEmployee.phone);
+            expect(response.body.data.branchId).toBe(newEmployee.branchId);
         });
 
         // Test validation accepts valid data
@@ -63,7 +64,8 @@ describe("Employee Routes", () => {
                 .send(validEmployee);
 
             expect(response.status).toBe(201);
-            expect(response.body).toHaveProperty("id");
+            expect(response.body).toHaveProperty("data");
+            expect(response.body.data).toHaveProperty("id");
         });
 
         // Test validation rejects missing required fields
@@ -154,15 +156,15 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(newEmployee);
 
-            const createdEmployeeId = createResponse.body.id;
+            const createdEmployeeId = createResponse.body.data.id;
 
             // Then, retrieve the employee by id
             const getResponse = await request(app)
                 .get(`/employees/${createdEmployeeId}`);
 
             expect(getResponse.status).toBe(200);
-            expect(getResponse.body.id).toBe(createdEmployeeId);
-            expect(getResponse.body.name).toBe(newEmployee.name);
+            expect(getResponse.body.data.id).toBe(createdEmployeeId);
+            expect(getResponse.body.data.name).toBe(newEmployee.name);
         });
 
         // Test retrieving a non-existent employee returns 404
@@ -191,7 +193,7 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(newEmployee);
 
-            const createdEmployeeId = createResponse.body.id;
+            const createdEmployeeId = createResponse.body.data.id;
 
             // Then, update the employee's name
             const updatedName = "Robert Johnson";
@@ -200,8 +202,8 @@ describe("Employee Routes", () => {
                 .send({ name: updatedName });
 
             expect(updateResponse.status).toBe(200);
-            expect(updateResponse.body.name).toBe(updatedName);
-            expect(updateResponse.body.id).toBe(createdEmployeeId);
+            expect(updateResponse.body.data.name).toBe(updatedName);
+            expect(updateResponse.body.data.id).toBe(createdEmployeeId);
         });
 
         // Test updating an employee's position
@@ -220,7 +222,7 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(newEmployee);
 
-            const createdEmployeeId = createResponse.body.id;
+            const createdEmployeeId = createResponse.body.data.id;
 
             // Then, update the employee's position to Senior Developer
             const updatedPosition = "Senior Developer";
@@ -229,7 +231,7 @@ describe("Employee Routes", () => {
                 .send({ position: updatedPosition });
 
             expect(updateResponse.status).toBe(200);
-            expect(updateResponse.body.position).toBe(updatedPosition);
+            expect(updateResponse.body.data.position).toBe(updatedPosition);
         });
 
         // Test updating a non-existent employee returns 404
@@ -259,7 +261,7 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(newEmployee);
 
-            const createdEmployeeId = createResponse.body.id;
+            const createdEmployeeId = createResponse.body.data.id;
 
             // Then, delete the employee
             const deleteResponse = await request(app)
@@ -284,7 +286,7 @@ describe("Employee Routes", () => {
                 .post("/employees")
                 .send(newEmployee);
 
-            const createdEmployeeId = createResponse.body.id;
+            const createdEmployeeId = createResponse.body.data.id;
 
             // Then, delete the employee
             await request(app)
@@ -346,8 +348,8 @@ describe("Employee Routes", () => {
                 .get("/employees/branch/999");
 
             expect(response.status).toBe(200);
-            expect(response.body).toHaveLength(2);
-            expect(response.body.every((emp: any) => emp.branchId === 999)).toBe(true);
+            expect(response.body.data).toHaveLength(2);
+            expect(response.body.data.every((emp: any) => emp.branchId === 999)).toBe(true);
         });
     });
 
@@ -370,13 +372,13 @@ describe("Employee Routes", () => {
             const response = await request(app).get("/employees");
 
             expect(response.status).toBe(200);
-            expect(response.body[0]).toHaveProperty("id");
-            expect(response.body[0]).toHaveProperty("name");
-            expect(response.body[0]).toHaveProperty("position");
-            expect(response.body[0]).toHaveProperty("department");
-            expect(response.body[0]).toHaveProperty("email");
-            expect(response.body[0]).toHaveProperty("phone");
-            expect(response.body[0]).toHaveProperty("branchId");
+            expect(response.body.data[0]).toHaveProperty("id");
+            expect(response.body.data[0]).toHaveProperty("name");
+            expect(response.body.data[0]).toHaveProperty("position");
+            expect(response.body.data[0]).toHaveProperty("department");
+            expect(response.body.data[0]).toHaveProperty("email");
+            expect(response.body.data[0]).toHaveProperty("phone");
+            expect(response.body.data[0]).toHaveProperty("branchId");
         });
     });
 });

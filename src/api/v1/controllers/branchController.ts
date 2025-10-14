@@ -26,7 +26,7 @@ import { SuccessResponse, ErrorResponse } from '../models/responseModels';
  * @param req - Express Request object containing branch data (name, address, phone) in body
  * @param res - Express Response object to send back the created branch
  */
-export function createBranchController(req: Request, res: Response): void {
+export async function createBranchController(req: Request, res: Response): Promise<void> {
     try {
         // Extract branch data from request body
         const { name, address, phone } = req.body;
@@ -39,7 +39,7 @@ export function createBranchController(req: Request, res: Response): void {
         };
 
         // Call service layer to create the branch
-        const newBranch = createBranch(branchData);
+        const newBranch = await createBranch(branchData);
 
         // Return 201 Created status with consistent response format
         const response: SuccessResponse<typeof newBranch> = {
@@ -66,10 +66,10 @@ export function createBranchController(req: Request, res: Response): void {
  * @param _req - Express Request object (unused, prefixed with underscore)
  * @param res - Express Response object to send back the branch list
  */
-export function getAllBranchesController(_req: Request, res: Response): void {
+export async function getAllBranchesController(_req: Request, res: Response): Promise<void> {
     try {
         // Call service layer to get all branches
-        const branches = getAllBranches();
+        const branches = await getAllBranches();
 
         // Return 200 OK status with consistent response format
         const response: SuccessResponse<typeof branches> = {
@@ -95,7 +95,7 @@ export function getAllBranchesController(_req: Request, res: Response): void {
  * @param req - Express Request object with id parameter in the URL
  * @param res - Express Response object to send back the branch or error
  */
-export function getBranchByIdController(req: Request, res: Response): void {
+export async function getBranchByIdController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse branch ID from request parameters
         const id = parseInt(req.params.id);
@@ -111,7 +111,7 @@ export function getBranchByIdController(req: Request, res: Response): void {
         }
 
         // Call service layer to find the branch
-        const branch = getBranchById(id);
+        const branch = await getBranchById(id);
 
         // Return 404 if branch not found, otherwise return 200 with branch data
         if (!branch) {
@@ -146,7 +146,7 @@ export function getBranchByIdController(req: Request, res: Response): void {
  * @param req - Express Request object with id parameter and update data in body
  * @param res - Express Response object to send back the updated branch or error
  */
-export function updateBranchController(req: Request, res: Response): void {
+export async function updateBranchController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse branch ID from request parameters
         const id = parseInt(req.params.id);
@@ -165,7 +165,7 @@ export function updateBranchController(req: Request, res: Response): void {
         const updateData = req.body;
 
         // Call service layer to update the branch
-        const updatedBranch = updateBranch(id, updateData);
+        const updatedBranch = await updateBranch(id, updateData);
 
         // Return 404 if branch not found, otherwise return 200 with updated branch
         if (!updatedBranch) {
@@ -201,7 +201,7 @@ export function updateBranchController(req: Request, res: Response): void {
  * @param req - Express Request object with id parameter in the URL
  * @param res - Express Response object with 204 status on success, 404 if not found
  */
-export function deleteBranchController(req: Request, res: Response): void {
+export async function deleteBranchController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse branch ID from request parameters
         const id = parseInt(req.params.id);
@@ -217,7 +217,7 @@ export function deleteBranchController(req: Request, res: Response): void {
         }
 
         // Call service layer to delete the branch
-        const deleted = deleteBranch(id);
+        const deleted = await deleteBranch(id);
 
         // Return 404 if branch not found, otherwise return 204 No Content
         if (!deleted) {

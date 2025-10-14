@@ -1,7 +1,7 @@
 /**
  * @fileoverview Employee Service - Handles all business logic for employee data management.
  * This module provides functions to create, read, update, and delete employee records,
- * as well as filter employees by branch or department. All data is stored in memory.
+ * as well as filter employees by branch or department. All data is stored in Firestore.
  *
  * Main Functions:
  * - createEmployee: Add a new employee to the system
@@ -16,32 +16,29 @@
  * @module services/employeeService
  */
 
-import { Employee, employees as employeeData } from '../../../data/employees';
+import { Employee } from '../../../data/employees';
 import { createDocument, getDocuments, getDocumentById, updateDocument, deleteDocument } from '../repositories/firestoreRepository';
 
-// In-memory storage for employees
-let employees: Employee[] = employeeData;
+// Counter for generating sequential employee IDs
 let nextId = 36;
 
 /**
  * Creates a new employee with auto-generated ID
- * Now using Firestore instead of in-memory storage
+ * Stores employee data in Firestore with the ID as part of the document
  * @param employeeData - Employee data without ID
  * @returns The created employee with generated ID
  */
 export async function createEmployee(employeeData: Omit<Employee, 'id'>): Promise<Employee> {
     try {
-        // Create document in Firestore with auto-generated ID
-        await createDocument<Omit<Employee, 'id'>>('employees', employeeData);
-
-        // Create employee with numeric id for compatibility
+        // Create employee with numeric id
         const employee: Employee = {
             id: nextId++,
             ...employeeData
         };
 
-        // Add to in-memory array for backward compatibility
-        employees.push(employee);
+        // Store the complete employee object (including ID) in Firestore
+        // Use the numeric ID as the document ID for easy retrieval
+        await createDocument<Employee>('employees', employee, employee.id.toString());
 
         // Return the created employee
         return employee;
@@ -56,7 +53,7 @@ export async function createEmployee(employeeData: Omit<Employee, 'id'>): Promis
 
 /**
  * Gets all employees
- * Now fetching from Firestore instead of in-memory storage
+ * Fetches employee data from Firestore
  * @returns Array of all employees
  */
 export async function getAllEmployees(): Promise<Employee[]> {
@@ -65,13 +62,7 @@ export async function getAllEmployees(): Promise<Employee[]> {
         const snapshot = await getDocuments('employees');
 
         // Convert Firestore documents to Employee array
-        const firestoreEmployees = snapshot.docs.map(doc => ({
-            id: nextId++,
-            ...doc.data()
-        })) as Employee[];
-
-        // Update in-memory array for backward compatibility
-        employees = firestoreEmployees;
+        const employees = snapshot.docs.map(doc => doc.data() as Employee);
 
         return employees;
     } catch (error) {
@@ -94,19 +85,12 @@ export async function getEmployeeById(id: number): Promise<Employee | undefined>
         // Retrieve employee document from Firestore by ID
         const doc = await getDocumentById('employees', id.toString());
         
-        if (!doc) {
+        if (!doc || !doc.exists) {
             return undefined;
         }
         
-        const data = doc.data();
-        if (!data) {
-            return undefined;
-        }
-        
-        return {
-            id,
-            ...data
-        } as Employee;
+        // Return the employee data directly (it already contains the ID)
+        return doc.data() as Employee;
     } catch (error) {
         throw new Error(
             `Failed to get employee by ID: ${
@@ -132,14 +116,17 @@ export async function updateEmployee(id: number, updateData: Partial<Omit<Employ
             return undefined;
         }
         
-        // Update employee document in Firestore
-        await updateDocument<Partial<Omit<Employee, 'id'>>>('employees', id.toString(), updateData);
-        
-        // Return the updated employee
-        return {
+        // Create the updated employee object
+        const updatedEmployee: Employee = {
             ...existingEmployee,
             ...updateData
         };
+        
+        // Update the entire employee document in Firestore
+        await updateDocument<Employee>('employees', id.toString(), updatedEmployee);
+        
+        // Return the updated employee
+        return updatedEmployee;
     } catch (error) {
         throw new Error(
             `Failed to update employee: ${
@@ -188,11 +175,8 @@ export async function getEmployeesByBranch(branchId: number): Promise<Employee[]
         // Fetch all employee documents from Firestore
         const snapshot = await getDocuments('employees');
         
-        // Convert Firestore documents to Employee array and filter by branchId
-        const allEmployees = snapshot.docs.map(doc => ({
-            id: parseInt(doc.id) || 0,
-            ...doc.data()
-        })) as Employee[];
+        // Convert Firestore documents to Employee array
+        const allEmployees = snapshot.docs.map(doc => doc.data() as Employee);
         
         // Filter employees by branch after fetching from Firestore
         return allEmployees.filter(employee => employee.branchId === branchId);
@@ -207,10 +191,25 @@ export async function getEmployeesByBranch(branchId: number): Promise<Employee[]
 
 /**
  * Gets all employees in a specific department
- * Filters employees by their department
+ * Fetches all employees from Firestore and filters by department
  * @param department - The department name to filter by
  * @returns Array of employees belonging to the specified department
  */
-export function getEmployeesByDepartment(department: string): Employee[] {
-    return employees.filter(employee => employee.department === department);
+export async function getEmployeesByDepartment(department: string): Promise<Employee[]> {
+    try {
+        // Fetch all employee documents from Firestore
+        const snapshot = await getDocuments('employees');
+        
+        // Convert Firestore documents to Employee array
+        const allEmployees = snapshot.docs.map(doc => doc.data() as Employee);
+        
+        // Filter employees by department
+        return allEmployees.filter(employee => employee.department === department);
+    } catch (error) {
+        throw new Error(
+            `Failed to get employees by department: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
+    }
 }

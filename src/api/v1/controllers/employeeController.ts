@@ -106,7 +106,7 @@ export async function getAllEmployeesController(_req: Request, res: Response): P
  * @param req - Express Request object with id parameter in the URL
  * @param res - Express Response object to send back the employee or error
  */
-export function getEmployeeByIdController(req: Request, res: Response): void {
+export async function getEmployeeByIdController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse employee ID from request parameters
         const id = parseInt(req.params.id);
@@ -122,7 +122,7 @@ export function getEmployeeByIdController(req: Request, res: Response): void {
         }
 
         // Call service layer to find the employee
-        const employee = getEmployeeById(id);
+        const employee = await getEmployeeById(id);
 
         // Return 404 if employee not found, otherwise return 200 with employee data
         if (!employee) {
@@ -134,7 +134,11 @@ export function getEmployeeByIdController(req: Request, res: Response): void {
             return;
         }
 
-        res.status(200).json(employee);
+        const response: SuccessResponse<typeof employee> = {
+            success: true,
+            data: employee
+        };
+        res.status(200).json(response);
     } catch (error) {
         // Handle any errors that occur during retrieval with consistent error format
         const errorResponse: ErrorResponse = {
@@ -153,7 +157,7 @@ export function getEmployeeByIdController(req: Request, res: Response): void {
  * @param req - Express Request object with id parameter and update data in body
  * @param res - Express Response object to send back the updated employee or error
  */
-export function updateEmployeeController(req: Request, res: Response): void {
+export async function updateEmployeeController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse employee ID from request parameters
         const id = parseInt(req.params.id);
@@ -172,7 +176,7 @@ export function updateEmployeeController(req: Request, res: Response): void {
         const updateData = req.body;
 
         // Call service layer to update the employee
-        const updatedEmployee = updateEmployee(id, updateData);
+        const updatedEmployee = await updateEmployee(id, updateData);
 
         // Return 404 if employee not found, otherwise return 200 with updated employee
         if (!updatedEmployee) {
@@ -184,7 +188,12 @@ export function updateEmployeeController(req: Request, res: Response): void {
             return;
         }
 
-        res.status(200).json(updatedEmployee);
+        const response: SuccessResponse<typeof updatedEmployee> = {
+            success: true,
+            data: updatedEmployee,
+            message: "Employee updated"
+        };
+        res.status(200).json(response);
     } catch (error) {
         // Handle any errors that occur during update with consistent error format
         const errorResponse: ErrorResponse = {
@@ -203,7 +212,7 @@ export function updateEmployeeController(req: Request, res: Response): void {
  * @param req - Express Request object with id parameter in the URL
  * @param res - Express Response object with 204 status on success, 404 if not found
  */
-export function deleteEmployeeController(req: Request, res: Response): void {
+export async function deleteEmployeeController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse employee ID from request parameters
         const id = parseInt(req.params.id);
@@ -219,7 +228,7 @@ export function deleteEmployeeController(req: Request, res: Response): void {
         }
 
         // Call service layer to delete the employee
-        const deleted = deleteEmployee(id);
+        const deleted = await deleteEmployee(id);
 
         // Return 404 if employee not found, otherwise return 204 No Content
         if (!deleted) {
@@ -249,28 +258,38 @@ export function deleteEmployeeController(req: Request, res: Response): void {
  * @param req - Express Request object with branchId parameter in the URL
  * @param res - Express Response object to send back the filtered employee list
  */
-export function getEmployeesByBranchController(req: Request, res: Response): void {
+export async function getEmployeesByBranchController(req: Request, res: Response): Promise<void> {
     try {
         // Extract and parse branch ID from request parameters
         const branchId = parseInt(req.params.branchId);
 
         // Validate that branch ID is a valid number
         if (isNaN(branchId)) {
-            res.status(400).json({ error: 'Invalid branch ID' });
+            const errorResponse: ErrorResponse = {
+                success: false,
+                error: 'Invalid branch ID'
+            };
+            res.status(400).json(errorResponse);
             return;
         }
 
         // Call service layer to get employees for the branch
-        const employees = getEmployeesByBranch(branchId);
+        const employees = await getEmployeesByBranch(branchId);
 
         // Return 200 OK status with the filtered employee array
-        res.status(200).json(employees);
+        const response: SuccessResponse<typeof employees> = {
+            success: true,
+            data: employees
+        };
+        res.status(200).json(response);
     } catch (error) {
         // Handle any errors that occur during retrieval
-        res.status(500).json({
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to retrieve employees by branch',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
 
@@ -280,21 +299,27 @@ export function getEmployeesByBranchController(req: Request, res: Response): voi
  * @param req - Express Request object with department parameter in the URL
  * @param res - Express Response object to send back the filtered employee list
  */
-export function getEmployeesByDepartmentController(req: Request, res: Response): void {
+export async function getEmployeesByDepartmentController(req: Request, res: Response): Promise<void> {
     try {
         // Extract department from request parameters
         const department = req.params.department;
 
         // Call service layer to get employees in the department
-        const employees = getEmployeesByDepartment(department);
+        const employees = await getEmployeesByDepartment(department);
 
-        // Return 200 OK status with the filtered employee array
-        res.status(200).json(employees);
+        // Return 200 OK status with consistent response format
+        const response: SuccessResponse<typeof employees> = {
+            success: true,
+            data: employees
+        };
+        res.status(200).json(response);
     } catch (error) {
         // Handle any errors that occur during retrieval
-        res.status(500).json({
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to retrieve employees by department',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
