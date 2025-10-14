@@ -39,7 +39,8 @@ router.get('/branches', getAllBranchesController);
 router.get('/branches/:id', getBranchByIdController);
 
 // PUT /branches/:id - Update a branch by ID
-router.put('/branches/:id', updateBranchController);
+// Validates branch data before updating
+router.put('/branches/:id', validate(branchSchema), updateBranchController);
 
 // DELETE /branches/:id - Delete a branch by ID
 router.delete('/branches/:id', deleteBranchController);
