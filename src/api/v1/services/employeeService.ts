@@ -17,6 +17,7 @@
  */
 
 import { Employee, employees as employeeData } from '../../../data/employees';
+import { createDocument } from '../repositories/firestoreRepository';
 
 // In-memory storage for employees
 let employees: Employee[] = employeeData;
@@ -24,21 +25,33 @@ let nextId = 36;
 
 /**
  * Creates a new employee with auto-generated ID
+ * Now using Firestore instead of in-memory storage
  * @param employeeData - Employee data without ID
  * @returns The created employee with generated ID
  */
-export function createEmployee(employeeData: Omit<Employee, 'id'>): Employee {
-    // Generate new ID
-    const newEmployee: Employee = {
-        id: nextId++,
-        ...employeeData
-    };
+export async function createEmployee(employeeData: Omit<Employee, 'id'>): Promise<Employee> {
+    try {
+        // Create document in Firestore with auto-generated ID
+        await createDocument<Omit<Employee, 'id'>>('employees', employeeData);
 
-    // Add to employees array
-    employees.push(newEmployee);
+        // Create employee with numeric id for compatibility
+        const employee: Employee = {
+            id: nextId++,
+            ...employeeData
+        };
 
-    // Return the created employee
-    return newEmployee;
+        // Add to in-memory array for backward compatibility
+        employees.push(employee);
+
+        // Return the created employee
+        return employee;
+    } catch (error) {
+        throw new Error(
+            `Failed to create employee: ${
+                error instanceof Error ? error.message : 'Unknown error'
+            }`
+        );
+    }
 }
 
 /**

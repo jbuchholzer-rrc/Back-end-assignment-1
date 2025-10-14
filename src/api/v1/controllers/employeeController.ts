@@ -28,7 +28,7 @@ import { SuccessResponse, ErrorResponse } from '../models/responseModels';
  * @param req - Express Request object containing employee data in body
  * @param res - Express Response object to send back the result
  */
-export function createEmployeeController(req: Request, res: Response): void {
+export async function createEmployeeController(req: Request, res: Response): Promise<void> {
     try {
         // Extract employee data from request body
         const { name, position, department, email, phone, branchId } = req.body;
@@ -50,7 +50,7 @@ export function createEmployeeController(req: Request, res: Response): void {
         };
 
         // Call service layer to create the employee
-        const newEmployee = createEmployee(employeeData);
+        const newEmployee = await createEmployee(employeeData);
 
         // Return 201 Created status with consistent response format
         const response: SuccessResponse<typeof newEmployee> = {
@@ -61,10 +61,12 @@ export function createEmployeeController(req: Request, res: Response): void {
         res.status(201).json(response);
     } catch (error) {
         // Handle any errors that occur during employee creation
-        res.status(500).json({
+        const errorResponse: ErrorResponse = {
+            success: false,
             error: 'Failed to create employee',
-            message: error instanceof Error ? error.message : 'Unknown error'
-        });
+            details: error instanceof Error ? error.message : 'Unknown error'
+        };
+        res.status(500).json(errorResponse);
     }
 }
 
