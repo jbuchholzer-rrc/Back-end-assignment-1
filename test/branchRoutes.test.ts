@@ -2,6 +2,8 @@
  * Branch Routes Tests
  * This file contains tests for all branch-related endpoints
  * including CRUD operations.
+ * 
+ * @author Jack Buchholzer
  */
 
 import request from "supertest";

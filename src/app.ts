@@ -1,4 +1,12 @@
-// Importing morgan
+/**
+ * @fileoverview Main Express Application Configuration
+ * This module sets up the Express application with middleware, routes, and health checks.
+ * It configures logging with Morgan, JSON body parsing, and registers all API routes.
+ *
+ * @author Jack Buchholzer
+ * @module app
+ */
+
 import morgan from "morgan";
 import express from "express";
 import employeeRoutes from "./api/v1/routes/employeeRoutes";
