@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Server Entry Point
+ * This module starts the Express server and listens on the specified port.
+ * It imports the configured Express app and initializes the HTTP server.
+ *
+ * @author Jack Buchholzer
+ * @module server
+ */
+
 import app from "./app";
 import { Server } from "http";
 
