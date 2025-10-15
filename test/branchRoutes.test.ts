@@ -2,6 +2,8 @@
  * Branch Routes Tests
  * This file contains tests for all branch-related endpoints
  * including CRUD operations.
+ * 
+ * @author Jack Buchholzer
  */
 
 import request from "supertest";
@@ -22,7 +24,23 @@ describe("Branch Routes", () => {
                 .send(newBranch);
 
             expect(response.status).toBe(201);
-            expect(response.body).toHaveProperty("id");
+            expect(response.body.data).toHaveProperty("id");
+        });
+
+        // Test validation with valid branch data
+        it("should accept branch with all valid fields", async () => {
+            const validBranch = {
+                name: "Toronto Branch",
+                address: "100 Queen St, Toronto, ON, M5H 2N2",
+                phone: "416-555-6000"
+            };
+
+            const response = await request(app)
+                .post("/branches")
+                .send(validBranch);
+
+            expect(response.status).toBe(201);
+            expect(response.body.data).toHaveProperty("id");
         });
 
         // Test verifying branch data is returned correctly
@@ -38,9 +56,9 @@ describe("Branch Routes", () => {
                 .send(newBranch);
 
             expect(response.status).toBe(201);
-            expect(response.body.name).toBe(newBranch.name);
-            expect(response.body.address).toBe(newBranch.address);
-            expect(response.body.phone).toBe(newBranch.phone);
+            expect(response.body.data.name).toBe(newBranch.name);
+            expect(response.body.data.address).toBe(newBranch.address);
+            expect(response.body.data.phone).toBe(newBranch.phone);
         });
     });
 
@@ -50,7 +68,7 @@ describe("Branch Routes", () => {
             const response = await request(app).get("/branches");
 
             expect(response.status).toBe(200);
-            expect(Array.isArray(response.body)).toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
         });
     });
 
@@ -68,14 +86,14 @@ describe("Branch Routes", () => {
                 .post("/branches")
                 .send(newBranch);
 
-            const createdBranchId = createResponse.body.id;
+            const createdBranchId = createResponse.body.data.id;
 
             // Then, retrieve the branch by id
             const getResponse = await request(app)
                 .get(`/branches/${createdBranchId}`);
 
             expect(getResponse.status).toBe(200);
-            expect(getResponse.body.id).toBe(createdBranchId);
+            expect(getResponse.body.data.id).toBe(createdBranchId);
         });
     });
 
@@ -93,7 +111,7 @@ describe("Branch Routes", () => {
                 .post("/branches")
                 .send(newBranch);
 
-            const createdBranchId = createResponse.body.id;
+            const createdBranchId = createResponse.body.data.id;
 
             // Then, update the branch name
             const updatedName = "New Branch Name";
@@ -102,7 +120,7 @@ describe("Branch Routes", () => {
                 .send({ name: updatedName });
 
             expect(updateResponse.status).toBe(200);
-            expect(updateResponse.body.name).toBe(updatedName);
+            expect(updateResponse.body.data.name).toBe(updatedName);
         });
 
         // Test updating a branch address
@@ -118,7 +136,7 @@ describe("Branch Routes", () => {
                 .post("/branches")
                 .send(newBranch);
 
-            const createdBranchId = createResponse.body.id;
+            const createdBranchId = createResponse.body.data.id;
 
             // Then, update the branch address to "456 Oak Ave"
             const updatedAddress = "456 Oak Ave";
@@ -127,7 +145,7 @@ describe("Branch Routes", () => {
                 .send({ address: updatedAddress });
 
             expect(updateResponse.status).toBe(200);
-            expect(updateResponse.body.address).toBe(updatedAddress);
+            expect(updateResponse.body.data.address).toBe(updatedAddress);
         });
     });
 
@@ -145,7 +163,7 @@ describe("Branch Routes", () => {
                 .post("/branches")
                 .send(newBranch);
 
-            const createdBranchId = createResponse.body.id;
+            const createdBranchId = createResponse.body.data.id;
 
             // Then, delete the branch
             const deleteResponse = await request(app)

@@ -47,3 +47,9 @@ coverage/
 # Package lock files
 package-lock.json.*.bak
 package-lock.json
+
+
+# Firebase credentials
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+

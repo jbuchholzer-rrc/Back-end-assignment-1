@@ -23,11 +23,14 @@ import {
     updateBranchController,
     deleteBranchController
 } from '../controllers/branchController';
+import { validate } from '../middleware/validationMiddleware';
+import { branchSchema, branchUpdateSchema } from '../validation/branchValidation';
 
 const router = Router();
 
 // POST /branches - Create a new branch
-router.post('/branches', createBranchController);
+// Validates branch data before creating
+router.post('/branches', validate(branchSchema), createBranchController);
 
 // GET /branches - Get all branches
 router.get('/branches', getAllBranchesController);
@@ -36,7 +39,8 @@ router.get('/branches', getAllBranchesController);
 router.get('/branches/:id', getBranchByIdController);
 
 // PUT /branches/:id - Update a branch by ID
-router.put('/branches/:id', updateBranchController);
+// Validates branch data before updating
+router.put('/branches/:id', validate(branchUpdateSchema), updateBranchController);
 
 // DELETE /branches/:id - Delete a branch by ID
 router.delete('/branches/:id', deleteBranchController);

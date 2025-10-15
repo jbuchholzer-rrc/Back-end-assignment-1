@@ -1,7 +1,7 @@
 {
-  "name": "assignment-2-jack-buchholzer",
+  "name": "assignment-3-jack-buchholzer",
   "version": "1.0.0",
-  "description": "Assignment 2 for back-end development",
+  "description": "Assignment 3 for back-end development",
   "keywords": [],
   "homepage": "https://github.com/jbuchholzer-rrc/Back-end-assignment-1#readme",
   "bugs": {
@@ -24,7 +24,10 @@
     "build": "tsc"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "firebase-admin": "^13.5.0",
+    "joi": "^18.0.1",
     "morgan": "^1.10.1"
   },
   "devDependencies": {

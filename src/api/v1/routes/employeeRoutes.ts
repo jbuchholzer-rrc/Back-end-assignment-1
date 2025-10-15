@@ -30,11 +30,14 @@ import {
     getEmployeesByBranchController,
     getEmployeesByDepartmentController
 } from '../controllers/employeeController';
+import { validate } from '../middleware/validationMiddleware';
+import { employeeSchema, employeeUpdateSchema } from '../validation/employeeValidation';
 
 const router = Router();
 
 // POST /employees - Create a new employee
-router.post('/employees', createEmployeeController);
+// Validates employee data before creating
+router.post('/employees', validate(employeeSchema), createEmployeeController);
 
 // GET /employees - Get all employees
 router.get('/employees', getAllEmployeesController);
@@ -50,7 +53,8 @@ router.get('/employees/department/:department', getEmployeesByDepartmentControll
 router.get('/employees/:id', getEmployeeByIdController);
 
 // PUT /employees/:id - Update an employee by ID
-router.put('/employees/:id', updateEmployeeController);
+// Validates employee data before updating
+router.put('/employees/:id', validate(employeeUpdateSchema), updateEmployeeController);
 
 // DELETE /employees/:id - Delete an employee by ID
 router.delete('/employees/:id', deleteEmployeeController);
