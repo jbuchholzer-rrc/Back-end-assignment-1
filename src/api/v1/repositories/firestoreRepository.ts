@@ -1,8 +1,5 @@
-// Update the import paths below to match the actual locations of your files.
-// Example (adjust as needed):
-import { db } from "../../../../config/firebase";
 
-// If the files do not exist, create them at the correct paths or update these imports accordingly.
+import { db } from "../../../../config/firebase";
 
 interface FieldValuePair {
     fieldName: string;
